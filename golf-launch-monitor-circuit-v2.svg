@@ -1,0 +1,307 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 850">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1100" height="850" fill="#fafafa"/>
+  
+  <!-- Title -->
+  <text x="550" y="35" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#1a1a1a">DIY Golf Launch Monitor - Phase 2 Circuit</text>
+  <text x="550" y="58" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">Doppler Radar + Camera + Strobe System</text>
+  
+  <!-- ==================== RADAR SECTION ==================== -->
+  <text x="50" y="95" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#1976d2">RADAR SUBSYSTEM (Speed Detection)</text>
+  <line x1="50" y1="100" x2="450" y2="100" stroke="#1976d2" stroke-width="1" stroke-dasharray="3,3"/>
+  
+  <!-- HB100 Module Box -->
+  <rect x="40" y="115" width="120" height="140" rx="6" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+  <text x="100" y="138" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#1976d2">HB100</text>
+  <text x="100" y="155" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#1976d2">Doppler Radar</text>
+  
+  <!-- HB100 Pins -->
+  <rect x="55" y="170" width="40" height="18" rx="2" fill="#fff" stroke="#1976d2"/>
+  <text x="75" y="183" font-family="monospace" font-size="9" text-anchor="middle" fill="#333">VCC</text>
+  
+  <rect x="55" y="195" width="40" height="18" rx="2" fill="#fff" stroke="#1976d2"/>
+  <text x="75" y="208" font-family="monospace" font-size="9" text-anchor="middle" fill="#333">GND</text>
+  
+  <rect x="55" y="220" width="40" height="18" rx="2" fill="#fff" stroke="#1976d2"/>
+  <text x="75" y="233" font-family="monospace" font-size="9" text-anchor="middle" fill="#333">IF</text>
+  
+  <!-- Pre-amp (simplified) -->
+  <rect x="200" y="115" width="140" height="140" rx="6" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+  <text x="270" y="138" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#f57c00">LM358</text>
+  <text x="270" y="155" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#f57c00">Pre-amplifier</text>
+  <text x="270" y="172" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">~10,000x gain</text>
+  
+  <!-- Op-amp symbol -->
+  <path d="M 230 200 L 230 240 L 280 220 Z" fill="none" stroke="#333" stroke-width="1.5"/>
+  <text x="223" y="213" font-family="monospace" font-size="10" text-anchor="end" fill="#333">−</text>
+  <text x="223" y="233" font-family="monospace" font-size="10" text-anchor="end" fill="#333">+</text>
+  
+  <!-- Connection HB100 to amp -->
+  <line x1="95" y1="229" x2="160" y2="229" stroke="#333" stroke-width="1.5"/>
+  <line x1="160" y1="229" x2="230" y2="229" stroke="#333" stroke-width="1.5"/>
+  
+  <!-- MCP3008 ADC -->
+  <rect x="380" y="115" width="100" height="140" rx="6" fill="#fce4ec" stroke="#c2185b" stroke-width="2"/>
+  <text x="430" y="138" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#c2185b">MCP3008</text>
+  <text x="430" y="155" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#c2185b">10-bit ADC</text>
+  
+  <!-- MCP3008 pins -->
+  <text x="395" y="180" font-family="monospace" font-size="8" fill="#333">CH0</text>
+  <text x="395" y="195" font-family="monospace" font-size="8" fill="#333">VDD</text>
+  <text x="395" y="210" font-family="monospace" font-size="8" fill="#333">GND</text>
+  <text x="430" y="180" font-family="monospace" font-size="8" fill="#333">CLK</text>
+  <text x="430" y="195" font-family="monospace" font-size="8" fill="#333">DOUT</text>
+  <text x="430" y="210" font-family="monospace" font-size="8" fill="#333">DIN</text>
+  <text x="430" y="225" font-family="monospace" font-size="8" fill="#333">CS</text>
+  
+  <!-- Amp to ADC connection -->
+  <line x1="280" y1="220" x2="340" y2="220" stroke="#333" stroke-width="1.5"/>
+  <line x1="340" y1="220" x2="340" y2="175" stroke="#333" stroke-width="1.5"/>
+  <line x1="340" y1="175" x2="390" y2="175" stroke="#333" stroke-width="1.5"/>
+  
+  <!-- ==================== CAMERA SECTION ==================== -->
+  <text x="50" y="300" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#2e7d32">CAMERA SUBSYSTEM (Launch Angle)</text>
+  <line x1="50" y1="305" x2="450" y2="305" stroke="#2e7d32" stroke-width="1" stroke-dasharray="3,3"/>
+  
+  <!-- Camera Module -->
+  <rect x="40" y="320" width="160" height="120" rx="6" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="120" y="345" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="#2e7d32">Pi Global Shutter</text>
+  <text x="120" y="362" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#2e7d32">Camera Module</text>
+  
+  <!-- Camera icon -->
+  <rect x="85" y="375" width="70" height="45" rx="5" fill="#fff" stroke="#2e7d32" stroke-width="1.5"/>
+  <circle cx="120" cy="397" r="15" fill="none" stroke="#2e7d32" stroke-width="1.5"/>
+  <circle cx="120" cy="397" r="8" fill="#2e7d32"/>
+  
+  <!-- CSI connection note -->
+  <text x="120" y="435" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">CSI Ribbon Cable</text>
+  
+  <!-- ==================== STROBE SECTION ==================== -->
+  <text x="50" y="480" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#7b1fa2">STROBE SUBSYSTEM (Freeze Motion)</text>
+  <line x1="50" y1="485" x2="450" y2="485" stroke="#7b1fa2" stroke-width="1" stroke-dasharray="3,3"/>
+  
+  <!-- IR LED Array -->
+  <rect x="40" y="500" width="120" height="100" rx="6" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+  <text x="100" y="523" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#7b1fa2">IR LED Array</text>
+  <text x="100" y="540" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">850nm High Power</text>
+  
+  <!-- LED symbols -->
+  <g transform="translate(60, 555)">
+    <polygon points="0,0 15,10 0,20" fill="none" stroke="#7b1fa2" stroke-width="1.5"/>
+    <line x1="15" y1="0" x2="15" y2="20" stroke="#7b1fa2" stroke-width="1.5"/>
+    <line x1="8" y1="-5" x2="18" y2="-10" stroke="#7b1fa2" stroke-width="1" marker-end="url(#arrowhead)"/>
+    <line x1="12" y1="-3" x2="22" y2="-8" stroke="#7b1fa2" stroke-width="1" marker-end="url(#arrowhead)"/>
+  </g>
+  <g transform="translate(100, 555)">
+    <polygon points="0,0 15,10 0,20" fill="none" stroke="#7b1fa2" stroke-width="1.5"/>
+    <line x1="15" y1="0" x2="15" y2="20" stroke="#7b1fa2" stroke-width="1.5"/>
+  </g>
+  
+  <!-- MOSFET Driver -->
+  <rect x="200" y="500" width="120" height="100" rx="6" fill="#ede7f6" stroke="#512da8" stroke-width="2"/>
+  <text x="260" y="523" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#512da8">MOSFET Driver</text>
+  <text x="260" y="540" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#666">IRLZ44N or similar</text>
+  
+  <!-- MOSFET symbol -->
+  <line x1="230" y1="560" x2="230" y2="590" stroke="#333" stroke-width="2"/>
+  <line x1="230" y1="575" x2="250" y2="575" stroke="#333" stroke-width="1.5"/>
+  <line x1="250" y1="555" x2="250" y2="595" stroke="#333" stroke-width="2"/>
+  <line x1="260" y1="555" x2="260" y2="565" stroke="#333" stroke-width="1.5"/>
+  <line x1="260" y1="575" x2="260" y2="585" stroke="#333" stroke-width="1.5"/>
+  <line x1="260" y1="585" x2="260" y2="595" stroke="#333" stroke-width="1.5"/>
+  <line x1="260" y1="565" x2="290" y2="565" stroke="#333" stroke-width="1.5"/>
+  <line x1="260" y1="585" x2="290" y2="585" stroke="#333" stroke-width="1.5"/>
+  
+  <!-- MOSFET labels -->
+  <text x="220" y="578" font-family="monospace" font-size="8" text-anchor="end" fill="#333">G</text>
+  <text x="295" y="568" font-family="monospace" font-size="8" fill="#333">D</text>
+  <text x="295" y="588" font-family="monospace" font-size="8" fill="#333">S</text>
+  
+  <!-- LED to MOSFET connection -->
+  <line x1="160" y1="565" x2="200" y2="565" stroke="#333" stroke-width="1.5"/>
+  
+  <!-- Current limiting resistor -->
+  <rect x="360" y="500" width="80" height="50" rx="4" fill="#fff" stroke="#333" stroke-width="1"/>
+  <text x="400" y="520" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#333">Resistor</text>
+  <text x="400" y="535" font-family="monospace" font-size="9" text-anchor="middle" fill="#666">1-5Ω (high W)</text>
+  
+  <!-- ==================== RASPBERRY PI ==================== -->
+  <rect x="550" y="115" width="220" height="500" rx="8" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+  <text x="660" y="145" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#c62828">Raspberry Pi 5</text>
+  
+  <!-- GPIO Header representation -->
+  <rect x="570" y="170" width="180" height="25" rx="3" fill="#333"/>
+  <text x="660" y="187" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="#fff">40-Pin GPIO Header</text>
+  
+  <!-- Pin connections list -->
+  <text x="580" y="220" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#333">SPI (to MCP3008):</text>
+  <text x="590" y="238" font-family="monospace" font-size="9" fill="#333">Pin 19 (GPIO 10) → MOSI</text>
+  <text x="590" y="253" font-family="monospace" font-size="9" fill="#333">Pin 21 (GPIO 9)  → MISO</text>
+  <text x="590" y="268" font-family="monospace" font-size="9" fill="#333">Pin 23 (GPIO 11) → CLK</text>
+  <text x="590" y="283" font-family="monospace" font-size="9" fill="#333">Pin 24 (GPIO 8)  → CS</text>
+  
+  <text x="580" y="310" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#333">Camera:</text>
+  <text x="590" y="328" font-family="monospace" font-size="9" fill="#333">CSI Port → Camera ribbon</text>
+  
+  <text x="580" y="355" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#333">Strobe Control:</text>
+  <text x="590" y="373" font-family="monospace" font-size="9" fill="#333">Pin 12 (GPIO 18) → MOSFET Gate</text>
+  <text x="590" y="388" font-family="monospace" font-size="9" fill="#333">(PWM capable for timing)</text>
+  
+  <text x="580" y="415" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#333">Power:</text>
+  <text x="590" y="433" font-family="monospace" font-size="9" fill="#333">Pin 1  (3.3V) → MCP3008 VDD</text>
+  <text x="590" y="448" font-family="monospace" font-size="9" fill="#333">Pin 2  (5V)   → HB100, LM358</text>
+  <text x="590" y="463" font-family="monospace" font-size="9" fill="#333">Pin 6  (GND)  → Common ground</text>
+  
+  <!-- CSI Port -->
+  <rect x="580" y="490" width="160" height="40" rx="4" fill="#fff" stroke="#2e7d32" stroke-width="2"/>
+  <text x="660" y="515" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#2e7d32">CSI Camera Port</text>
+  
+  <!-- USB/Power -->
+  <rect x="580" y="550" width="160" height="40" rx="4" fill="#fff" stroke="#333" stroke-width="1"/>
+  <text x="660" y="575" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#333">USB-C Power (5V 5A)</text>
+  
+  <!-- Connection lines to Pi -->
+  <!-- SPI lines -->
+  <path d="M 480 185 L 520 185 L 520 250 L 570 250" stroke="#c2185b" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+  <text x="500" y="180" font-family="Arial, sans-serif" font-size="8" fill="#c2185b">SPI</text>
+  
+  <!-- Camera CSI -->
+  <path d="M 200 390 L 530 390 L 530 510 L 570 510" stroke="#2e7d32" stroke-width="2" fill="none"/>
+  <text x="350" y="385" font-family="Arial, sans-serif" font-size="8" fill="#2e7d32">CSI Ribbon</text>
+  
+  <!-- Strobe GPIO -->
+  <path d="M 230 560 L 230 530 L 520 530 L 520 380 L 570 380" stroke="#7b1fa2" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+  <text x="400" y="525" font-family="Arial, sans-serif" font-size="8" fill="#7b1fa2">GPIO 18</text>
+  
+  <!-- ==================== PHYSICAL SETUP DIAGRAM ==================== -->
+  <rect x="820" y="115" width="250" height="280" rx="8" fill="#fff" stroke="#333" stroke-width="1"/>
+  <text x="945" y="140" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Physical Setup (Top View)</text>
+  
+  <!-- Setup diagram -->
+  <!-- Golfer -->
+  <circle cx="860" cy="330" r="15" fill="#795548"/>
+  <text x="860" y="360" font-family="Arial, sans-serif" font-size="9" text-anchor="middle" fill="#333">Golfer</text>
+  
+  <!-- Ball -->
+  <circle cx="920" cy="330" r="8" fill="#fff" stroke="#333" stroke-width="1.5"/>
+  <text x="920" y="355" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#333">Ball</text>
+  
+  <!-- Ball flight direction -->
+  <line x1="935" y1="330" x2="1030" y2="330" stroke="#333" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arrowhead)"/>
+  <text x="980" y="320" font-family="Arial, sans-serif" font-size="8" fill="#333">Flight</text>
+  
+  <!-- Radar position -->
+  <rect x="840" y="180" width="40" height="30" rx="3" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5"/>
+  <text x="860" y="200" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#1976d2">Radar</text>
+  <line x1="860" y1="210" x2="860" y2="310" stroke="#1976d2" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="870" y="260" font-family="Arial, sans-serif" font-size="7" fill="#1976d2">6-8 ft</text>
+  
+  <!-- Camera position -->
+  <rect x="980" y="230" width="50" height="35" rx="3" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.5"/>
+  <text x="1005" y="252" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#2e7d32">Camera</text>
+  <line x1="980" y1="265" x2="920" y2="330" stroke="#2e7d32" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="935" y="290" font-family="Arial, sans-serif" font-size="7" fill="#2e7d32">2-3 ft</text>
+  
+  <!-- Strobe LEDs -->
+  <rect x="980" y="280" width="50" height="25" rx="3" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="1.5"/>
+  <text x="1005" y="297" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#7b1fa2">Strobes</text>
+  
+  <!-- View angle indicator -->
+  <path d="M 980 265 L 930 310 L 930 350 L 980 305 Z" fill="#2e7d3220" stroke="none"/>
+  
+  <!-- ==================== TIMING DIAGRAM ==================== -->
+  <rect x="820" y="420" width="250" height="175" rx="8" fill="#fff" stroke="#333" stroke-width="1"/>
+  <text x="945" y="445" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Timing Sequence</text>
+  
+  <!-- Timeline -->
+  <line x1="840" y1="480" x2="1050" y2="480" stroke="#333" stroke-width="1"/>
+  <text x="840" y="475" font-family="Arial, sans-serif" font-size="8" fill="#333">0ms</text>
+  <text x="940" y="475" font-family="Arial, sans-serif" font-size="8" fill="#333">1ms</text>
+  <text x="1040" y="475" font-family="Arial, sans-serif" font-size="8" fill="#333">2ms</text>
+  
+  <!-- Radar trigger -->
+  <rect x="840" y="490" width="30" height="15" fill="#1976d2"/>
+  <text x="875" y="500" font-family="Arial, sans-serif" font-size="8" fill="#1976d2">Radar triggers</text>
+  
+  <!-- Camera shutter -->
+  <rect x="860" y="510" width="150" height="15" fill="#2e7d32"/>
+  <text x="935" y="520" font-family="Arial, sans-serif" font-size="8" fill="#fff">Camera shutter open</text>
+  
+  <!-- Strobe flashes -->
+  <rect x="880" y="530" width="5" height="20" fill="#7b1fa2"/>
+  <rect x="940" y="530" width="5" height="20" fill="#7b1fa2"/>
+  <rect x="1000" y="530" width="5" height="20" fill="#7b1fa2"/>
+  <text x="940" y="565" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#7b1fa2">Strobe flashes (~10µs each)</text>
+  
+  <!-- Result -->
+  <text x="840" y="585" font-family="Arial, sans-serif" font-size="9" fill="#333">Result: 3 ball positions in 1 image</text>
+  
+  <!-- ==================== BILL OF MATERIALS ==================== -->
+  <rect x="40" y="635" width="350" height="190" rx="6" fill="#efebe9" stroke="#795548" stroke-width="1"/>
+  <text x="215" y="660" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#795548">Bill of Materials - Phase 2</text>
+  
+  <text x="55" y="685" font-family="Arial, sans-serif" font-size="10" fill="#333">Radar Components:</text>
+  <text x="65" y="700" font-family="monospace" font-size="9" fill="#666">• HB100 Doppler Module ........... $8</text>
+  <text x="65" y="713" font-family="monospace" font-size="9" fill="#666">• LM358 + resistors/caps ........ $5</text>
+  <text x="65" y="726" font-family="monospace" font-size="9" fill="#666">• MCP3008 ADC ................... $4</text>
+  
+  <text x="55" y="746" font-family="Arial, sans-serif" font-size="10" fill="#333">Camera Components:</text>
+  <text x="65" y="761" font-family="monospace" font-size="9" fill="#666">• Pi Global Shutter Camera ...... $50</text>
+  <text x="65" y="774" font-family="monospace" font-size="9" fill="#666">• IR LEDs (850nm, 10W) .......... $15</text>
+  <text x="65" y="787" font-family="monospace" font-size="9" fill="#666">• IRLZ44N MOSFET + driver ....... $5</text>
+  
+  <text x="55" y="807" font-family="Arial, sans-serif" font-size="10" fill="#333">Core:</text>
+  <text x="65" y="820" font-family="monospace" font-size="9" fill="#666">• Raspberry Pi 5 + SD card ...... $70</text>
+  
+  <!-- Total -->
+  <rect x="410" y="635" width="160" height="60" rx="6" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="490" y="660" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#2e7d32">Total Cost</text>
+  <text x="490" y="685" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#2e7d32">~$157</text>
+  
+  <!-- ==================== SOFTWARE STACK ==================== -->
+  <rect x="410" y="710" width="160" height="115" rx="6" fill="#e0f2f1" stroke="#00796b" stroke-width="1"/>
+  <text x="490" y="735" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#00796b">Software Stack</text>
+  <text x="425" y="755" font-family="monospace" font-size="9" fill="#333">• Python 3.11+</text>
+  <text x="425" y="770" font-family="monospace" font-size="9" fill="#333">• NumPy + SciPy</text>
+  <text x="425" y="785" font-family="monospace" font-size="9" fill="#333">• OpenCV</text>
+  <text x="425" y="800" font-family="monospace" font-size="9" fill="#333">• picamera2</text>
+  <text x="425" y="815" font-family="monospace" font-size="9" fill="#333">• spidev + RPi.GPIO</text>
+  
+  <!-- ==================== METRICS TABLE ==================== -->
+  <rect x="600" y="635" width="230" height="190" rx="6" fill="#e8eaf6" stroke="#3f51b5" stroke-width="1"/>
+  <text x="715" y="660" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#3f51b5">Measurable Metrics</text>
+  
+  <text x="615" y="685" font-family="Arial, sans-serif" font-size="10" fill="#333">✓ Ball Speed (radar)</text>
+  <text x="615" y="702" font-family="Arial, sans-serif" font-size="10" fill="#333">✓ Club Head Speed (radar)</text>
+  <text x="615" y="719" font-family="Arial, sans-serif" font-size="10" fill="#333">✓ Launch Angle (camera)</text>
+  <text x="615" y="736" font-family="Arial, sans-serif" font-size="10" fill="#333">✓ Estimated Carry (calculated)</text>
+  <text x="615" y="753" font-family="Arial, sans-serif" font-size="10" fill="#333">○ Spin Rate (needs marked balls)</text>
+  <text x="615" y="770" font-family="Arial, sans-serif" font-size="10" fill="#333">○ Launch Direction (needs 2nd cam)</text>
+  
+  <text x="615" y="800" font-family="Arial, sans-serif" font-size="9" fill="#666">✓ = Phase 2 capable</text>
+  <text x="615" y="815" font-family="Arial, sans-serif" font-size="9" fill="#666">○ = Future enhancement</text>
+  
+  <!-- ==================== NOTES ==================== -->
+  <rect x="850" y="635" width="220" height="190" rx="6" fill="#fff9c4" stroke="#f9a825" stroke-width="1"/>
+  <text x="960" y="660" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#f9a825">⚠️ Important Notes</text>
+  
+  <text x="865" y="685" font-family="Arial, sans-serif" font-size="9" fill="#333">1. Use IR LEDs (850nm) with IR-pass</text>
+  <text x="875" y="698" font-family="Arial, sans-serif" font-size="9" fill="#333">filter for consistent lighting</text>
+  
+  <text x="865" y="718" font-family="Arial, sans-serif" font-size="9" fill="#333">2. Strobe timing is critical - may</text>
+  <text x="875" y="731" font-family="Arial, sans-serif" font-size="9" fill="#333">need hardware timer (not Python)</text>
+  
+  <text x="865" y="751" font-family="Arial, sans-serif" font-size="9" fill="#333">3. Global shutter camera essential</text>
+  <text x="875" y="764" font-family="Arial, sans-serif" font-size="9" fill="#333">to avoid rolling shutter distortion</text>
+  
+  <text x="865" y="784" font-family="Arial, sans-serif" font-size="9" fill="#333">4. High-power LEDs need heatsink</text>
+  <text x="875" y="797" font-family="Arial, sans-serif" font-size="9" fill="#333">and proper current limiting</text>
+  
+  <text x="865" y="817" font-family="Arial, sans-serif" font-size="9" fill="#333">5. See PiTrac project for advanced</text>
+</svg>

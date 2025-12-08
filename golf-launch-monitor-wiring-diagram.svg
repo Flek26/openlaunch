@@ -1,0 +1,463 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+    <!-- Breadboard hole pattern -->
+    <pattern id="holePattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+      <circle cx="5" cy="5" r="2" fill="#333"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="900" fill="#f5f5f5"/>
+  
+  <!-- Title -->
+  <text x="600" y="35" font-family="Arial, sans-serif" font-size="26" font-weight="bold" text-anchor="middle" fill="#1a1a1a">DIY Golf Launch Monitor - Breadboard Wiring Diagram</text>
+  <text x="600" y="58" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">Phase 1: HB100 Radar → LM358 Amp → MCP3008 ADC → Raspberry Pi 5</text>
+  
+  <!-- ==================== BREADBOARD ==================== -->
+  <rect x="50" y="100" width="700" height="380" rx="8" fill="#e8e8e8" stroke="#999" stroke-width="2"/>
+  <text x="400" y="90" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">830-Point Breadboard</text>
+  
+  <!-- Power rails - top -->
+  <rect x="60" y="110" width="680" height="30" rx="3" fill="#fff" stroke="#ccc"/>
+  <line x1="70" y1="120" x2="730" y2="120" stroke="#d32f2f" stroke-width="2"/>
+  <line x1="70" y1="132" x2="730" y2="132" stroke="#1976d2" stroke-width="2"/>
+  <text x="55" y="123" font-family="Arial, sans-serif" font-size="9" fill="#d32f2f">+</text>
+  <text x="55" y="135" font-family="Arial, sans-serif" font-size="9" fill="#1976d2">−</text>
+  <!-- Holes on power rail -->
+  <g fill="#333">
+    <circle cx="80" cy="120" r="2"/><circle cx="95" cy="120" r="2"/><circle cx="110" cy="120" r="2"/><circle cx="125" cy="120" r="2"/><circle cx="140" cy="120" r="2"/>
+    <circle cx="160" cy="120" r="2"/><circle cx="175" cy="120" r="2"/><circle cx="190" cy="120" r="2"/><circle cx="205" cy="120" r="2"/><circle cx="220" cy="120" r="2"/>
+    <circle cx="240" cy="120" r="2"/><circle cx="255" cy="120" r="2"/><circle cx="270" cy="120" r="2"/><circle cx="285" cy="120" r="2"/><circle cx="300" cy="120" r="2"/>
+    <circle cx="320" cy="120" r="2"/><circle cx="335" cy="120" r="2"/><circle cx="350" cy="120" r="2"/><circle cx="365" cy="120" r="2"/><circle cx="380" cy="120" r="2"/>
+    <circle cx="400" cy="120" r="2"/><circle cx="415" cy="120" r="2"/><circle cx="430" cy="120" r="2"/><circle cx="445" cy="120" r="2"/><circle cx="460" cy="120" r="2"/>
+    <circle cx="480" cy="120" r="2"/><circle cx="495" cy="120" r="2"/><circle cx="510" cy="120" r="2"/><circle cx="525" cy="120" r="2"/><circle cx="540" cy="120" r="2"/>
+    <circle cx="560" cy="120" r="2"/><circle cx="575" cy="120" r="2"/><circle cx="590" cy="120" r="2"/><circle cx="605" cy="120" r="2"/><circle cx="620" cy="120" r="2"/>
+    <circle cx="640" cy="120" r="2"/><circle cx="655" cy="120" r="2"/><circle cx="670" cy="120" r="2"/><circle cx="685" cy="120" r="2"/><circle cx="700" cy="120" r="2"/>
+    <circle cx="715" cy="120" r="2"/><circle cx="730" cy="120" r="2"/>
+  </g>
+  <g fill="#333">
+    <circle cx="80" cy="132" r="2"/><circle cx="95" cy="132" r="2"/><circle cx="110" cy="132" r="2"/><circle cx="125" cy="132" r="2"/><circle cx="140" cy="132" r="2"/>
+    <circle cx="160" cy="132" r="2"/><circle cx="175" cy="132" r="2"/><circle cx="190" cy="132" r="2"/><circle cx="205" cy="132" r="2"/><circle cx="220" cy="132" r="2"/>
+    <circle cx="240" cy="132" r="2"/><circle cx="255" cy="132" r="2"/><circle cx="270" cy="132" r="2"/><circle cx="285" cy="132" r="2"/><circle cx="300" cy="132" r="2"/>
+    <circle cx="320" cy="132" r="2"/><circle cx="335" cy="132" r="2"/><circle cx="350" cy="132" r="2"/><circle cx="365" cy="132" r="2"/><circle cx="380" cy="132" r="2"/>
+    <circle cx="400" cy="132" r="2"/><circle cx="415" cy="132" r="2"/><circle cx="430" cy="132" r="2"/><circle cx="445" cy="132" r="2"/><circle cx="460" cy="132" r="2"/>
+    <circle cx="480" cy="132" r="2"/><circle cx="495" cy="132" r="2"/><circle cx="510" cy="132" r="2"/><circle cx="525" cy="132" r="2"/><circle cx="540" cy="132" r="2"/>
+    <circle cx="560" cy="132" r="2"/><circle cx="575" cy="132" r="2"/><circle cx="590" cy="132" r="2"/><circle cx="605" cy="132" r="2"/><circle cx="620" cy="132" r="2"/>
+    <circle cx="640" cy="132" r="2"/><circle cx="655" cy="132" r="2"/><circle cx="670" cy="132" r="2"/><circle cx="685" cy="132" r="2"/><circle cx="700" cy="132" r="2"/>
+    <circle cx="715" cy="132" r="2"/><circle cx="730" cy="132" r="2"/>
+  </g>
+  
+  <!-- Main breadboard area - top half (rows a-e) -->
+  <rect x="60" y="150" width="680" height="85" rx="3" fill="#fff" stroke="#ccc"/>
+  <!-- Row labels -->
+  <text x="55" y="165" font-family="monospace" font-size="8" fill="#666">a</text>
+  <text x="55" y="180" font-family="monospace" font-size="8" fill="#666">b</text>
+  <text x="55" y="195" font-family="monospace" font-size="8" fill="#666">c</text>
+  <text x="55" y="210" font-family="monospace" font-size="8" fill="#666">d</text>
+  <text x="55" y="225" font-family="monospace" font-size="8" fill="#666">e</text>
+  
+  <!-- Center channel -->
+  <rect x="60" y="240" width="680" height="20" rx="0" fill="#e8e8e8"/>
+  
+  <!-- Main breadboard area - bottom half (rows f-j) -->
+  <rect x="60" y="265" width="680" height="85" rx="3" fill="#fff" stroke="#ccc"/>
+  <!-- Row labels -->
+  <text x="55" y="280" font-family="monospace" font-size="8" fill="#666">f</text>
+  <text x="55" y="295" font-family="monospace" font-size="8" fill="#666">g</text>
+  <text x="55" y="310" font-family="monospace" font-size="8" fill="#666">h</text>
+  <text x="55" y="325" font-family="monospace" font-size="8" fill="#666">i</text>
+  <text x="55" y="340" font-family="monospace" font-size="8" fill="#666">j</text>
+  
+  <!-- Power rails - bottom -->
+  <rect x="60" y="360" width="680" height="30" rx="3" fill="#fff" stroke="#ccc"/>
+  <line x1="70" y1="370" x2="730" y2="370" stroke="#d32f2f" stroke-width="2"/>
+  <line x1="70" y1="382" x2="730" y2="382" stroke="#1976d2" stroke-width="2"/>
+  <text x="55" y="373" font-family="Arial, sans-serif" font-size="9" fill="#d32f2f">+</text>
+  <text x="55" y="385" font-family="Arial, sans-serif" font-size="9" fill="#1976d2">−</text>
+  
+  <!-- Column numbers -->
+  <g font-family="monospace" font-size="7" fill="#666">
+    <text x="78" y="405">1</text><text x="93" y="405">2</text><text x="108" y="405">3</text><text x="123" y="405">4</text><text x="138" y="405">5</text>
+    <text x="153" y="405">6</text><text x="168" y="405">7</text><text x="183" y="405">8</text><text x="198" y="405">9</text><text x="210" y="405">10</text>
+    <text x="225" y="405">11</text><text x="240" y="405">12</text><text x="255" y="405">13</text><text x="270" y="405">14</text><text x="285" y="405">15</text>
+    <text x="300" y="405">16</text><text x="315" y="405">17</text><text x="330" y="405">18</text><text x="345" y="405">19</text><text x="360" y="405">20</text>
+    <text x="375" y="405">21</text><text x="390" y="405">22</text><text x="405" y="405">23</text><text x="420" y="405">24</text><text x="435" y="405">25</text>
+    <text x="450" y="405">26</text><text x="465" y="405">27</text><text x="480" y="405">28</text><text x="495" y="405">29</text><text x="510" y="405">30</text>
+  </g>
+  
+  <!-- ==================== HB100 MODULE ==================== -->
+  <rect x="80" y="155" width="60" height="75" rx="4" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+  <text x="110" y="175" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#1976d2">HB100</text>
+  <text x="110" y="188" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#666">Radar</text>
+  <!-- HB100 pins -->
+  <circle cx="90" cy="220" r="3" fill="#d32f2f"/><text x="90" y="235" font-family="monospace" font-size="7" text-anchor="middle" fill="#333">VCC</text>
+  <circle cx="110" cy="220" r="3" fill="#333"/><text x="110" y="235" font-family="monospace" font-size="7" text-anchor="middle" fill="#333">GND</text>
+  <circle cx="130" cy="220" r="3" fill="#ff9800"/><text x="130" y="235" font-family="monospace" font-size="7" text-anchor="middle" fill="#333">IF</text>
+  
+  <!-- ==================== LM358 AMPLIFIER MODULE ==================== -->
+  <rect x="180" y="155" width="100" height="75" rx="4" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+  <text x="230" y="175" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#f57c00">LM358 Module</text>
+  <text x="230" y="188" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#666">Pre-amp (100x)</text>
+  <!-- LM358 pins -->
+  <circle cx="195" cy="220" r="3" fill="#d32f2f"/><text x="195" y="235" font-family="monospace" font-size="7" text-anchor="middle" fill="#333">VCC</text>
+  <circle cx="215" cy="220" r="3" fill="#333"/><text x="215" y="235" font-family="monospace" font-size="7" text-anchor="middle" fill="#333">GND</text>
+  <circle cx="235" cy="220" r="3" fill="#ff9800"/><text x="235" y="235" font-family="monospace" font-size="7" text-anchor="middle" fill="#333">IN</text>
+  <circle cx="255" cy="220" r="3" fill="#4caf50"/><text x="255" y="235" font-family="monospace" font-size="7" text-anchor="middle" fill="#333">OUT</text>
+  
+  <!-- ==================== MCP3008 ADC ==================== -->
+  <!-- DIP-16 package straddling the center channel -->
+  <rect x="350" y="185" width="120" height="75" rx="4" fill="#fce4ec" stroke="#c2185b" stroke-width="2"/>
+  <text x="410" y="205" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#c2185b">MCP3008</text>
+  <text x="410" y="218" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#666">10-bit ADC</text>
+  <!-- Notch indicator -->
+  <path d="M 400 185 A 10 10 0 0 1 420 185" fill="#fce4ec" stroke="#c2185b" stroke-width="1"/>
+  
+  <!-- MCP3008 pin labels - left side (pins 1-8) -->
+  <g font-family="monospace" font-size="7" fill="#333">
+    <circle cx="360" cy="230" r="2.5" fill="#4caf50"/><text x="370" y="233">CH0</text>
+    <circle cx="360" cy="242" r="2.5" fill="#999"/><text x="370" y="245">CH1</text>
+    <circle cx="360" cy="254" r="2.5" fill="#999"/><text x="370" y="257">CH2</text>
+    <circle cx="360" cy="266" r="2.5" fill="#999"/><text x="370" y="269">CH3</text>
+    <circle cx="360" cy="278" r="2.5" fill="#999"/><text x="370" y="281">CH4</text>
+    <circle cx="360" cy="290" r="2.5" fill="#999"/><text x="370" y="293">CH5</text>
+    <circle cx="360" cy="302" r="2.5" fill="#999"/><text x="370" y="305">CH6</text>
+    <circle cx="360" cy="314" r="2.5" fill="#999"/><text x="370" y="317">CH7</text>
+  </g>
+  <!-- MCP3008 pin labels - right side (pins 9-16) -->
+  <g font-family="monospace" font-size="7" fill="#333">
+    <text x="430" y="317" text-anchor="end">DGND</text><circle cx="460" cy="314" r="2.5" fill="#333"/>
+    <text x="430" y="305" text-anchor="end">CS</text><circle cx="460" cy="302" r="2.5" fill="#9c27b0"/>
+    <text x="430" y="293" text-anchor="end">DIN</text><circle cx="460" cy="290" r="2.5" fill="#2196f3"/>
+    <text x="430" y="281" text-anchor="end">DOUT</text><circle cx="460" cy="278" r="2.5" fill="#ff5722"/>
+    <text x="430" y="269" text-anchor="end">CLK</text><circle cx="460" cy="266" r="2.5" fill="#ffeb3b"/>
+    <text x="430" y="257" text-anchor="end">AGND</text><circle cx="460" cy="254" r="2.5" fill="#333"/>
+    <text x="430" y="245" text-anchor="end">VREF</text><circle cx="460" cy="242" r="2.5" fill="#d32f2f"/>
+    <text x="430" y="233" text-anchor="end">VDD</text><circle cx="460" cy="230" r="2.5" fill="#d32f2f"/>
+  </g>
+  
+  <!-- ==================== WIRING ==================== -->
+  
+  <!-- HB100 VCC to power rail (red) -->
+  <path d="M 90 220 L 90 250 L 80 250 L 80 120" stroke="#d32f2f" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- HB100 GND to ground rail (black) -->
+  <path d="M 110 220 L 110 250 L 95 250 L 95 132" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- HB100 IF to LM358 IN (orange) -->
+  <path d="M 130 220 L 130 250 L 235 250 L 235 220" stroke="#ff9800" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- LM358 VCC to power rail (red) -->
+  <path d="M 195 220 L 195 250 L 175 250 L 175 120" stroke="#d32f2f" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- LM358 GND to ground rail (black) -->
+  <path d="M 215 220 L 215 250 L 190 250 L 190 132" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- LM358 OUT to MCP3008 CH0 (green) -->
+  <path d="M 255 220 L 255 250 L 320 250 L 320 230 L 360 230" stroke="#4caf50" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- MCP3008 VDD to power rail (red) - but needs 3.3V! -->
+  <path d="M 460 230 L 500 230 L 500 155 L 540 155 L 540 120" stroke="#ff5722" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <text x="515" y="148" font-family="Arial, sans-serif" font-size="8" fill="#ff5722">3.3V!</text>
+  
+  <!-- MCP3008 VREF to 3.3V -->
+  <path d="M 460 242 L 510 242 L 510 155 L 555 155 L 555 120" stroke="#ff5722" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- MCP3008 AGND to ground rail -->
+  <path d="M 460 254 L 520 254 L 520 370 L 540 370 L 540 382" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- MCP3008 DGND to ground rail -->
+  <path d="M 460 314 L 530 314 L 530 382" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- ==================== RASPBERRY PI 5 ==================== -->
+  <rect x="800" y="100" width="350" height="380" rx="8" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="975" y="130" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#2e7d32">Raspberry Pi 5</text>
+  
+  <!-- GPIO Header -->
+  <rect x="820" y="150" width="310" height="310" rx="4" fill="#fff" stroke="#333" stroke-width="1"/>
+  <text x="975" y="170" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#333">40-Pin GPIO Header</text>
+  
+  <!-- GPIO pins - showing relevant ones -->
+  <!-- Left column (odd pins) -->
+  <g font-family="monospace" font-size="9">
+    <!-- Pin 1 - 3.3V -->
+    <rect x="830" y="185" width="60" height="18" rx="2" fill="#ff5722"/>
+    <text x="860" y="198" text-anchor="middle" fill="#fff">3.3V</text>
+    <circle cx="900" cy="194" r="5" fill="#ff5722" stroke="#333"/>
+    <text x="910" y="197" fill="#333">1</text>
+    
+    <!-- Pin 3 - GPIO 2 (SDA) -->
+    <rect x="830" y="208" width="60" height="18" rx="2" fill="#ccc"/>
+    <text x="860" y="221" text-anchor="middle" fill="#333">GPIO2</text>
+    <circle cx="900" cy="217" r="5" fill="#ccc" stroke="#333"/>
+    <text x="910" y="220" fill="#333">3</text>
+    
+    <!-- Pin 5 - GPIO 3 (SCL) -->
+    <rect x="830" y="231" width="60" height="18" rx="2" fill="#ccc"/>
+    <text x="860" y="244" text-anchor="middle" fill="#333">GPIO3</text>
+    <circle cx="900" cy="240" r="5" fill="#ccc" stroke="#333"/>
+    <text x="910" y="243" fill="#333">5</text>
+    
+    <!-- Pin 7 - GPIO 4 -->
+    <rect x="830" y="254" width="60" height="18" rx="2" fill="#ccc"/>
+    <text x="860" y="267" text-anchor="middle" fill="#333">GPIO4</text>
+    <circle cx="900" cy="263" r="5" fill="#ccc" stroke="#333"/>
+    <text x="910" y="266" fill="#333">7</text>
+    
+    <!-- Pin 9 - GND -->
+    <rect x="830" y="277" width="60" height="18" rx="2" fill="#333"/>
+    <text x="860" y="290" text-anchor="middle" fill="#fff">GND</text>
+    <circle cx="900" cy="286" r="5" fill="#333" stroke="#333"/>
+    <text x="910" y="289" fill="#333">9</text>
+    
+    <!-- Pin 11 - GPIO 17 -->
+    <rect x="830" y="300" width="60" height="18" rx="2" fill="#ccc"/>
+    <text x="860" y="313" text-anchor="middle" fill="#333">GPIO17</text>
+    <circle cx="900" cy="309" r="5" fill="#ccc" stroke="#333"/>
+    <text x="910" y="312" fill="#333">11</text>
+    
+    <!-- Pin 13 - GPIO 27 -->
+    <rect x="830" y="323" width="60" height="18" rx="2" fill="#ccc"/>
+    <text x="860" y="336" text-anchor="middle" fill="#333">GPIO27</text>
+    <circle cx="900" cy="332" r="5" fill="#ccc" stroke="#333"/>
+    <text x="910" y="335" fill="#333">13</text>
+    
+    <!-- Pin 15 - GPIO 22 -->
+    <rect x="830" y="346" width="60" height="18" rx="2" fill="#ccc"/>
+    <text x="860" y="359" text-anchor="middle" fill="#333">GPIO22</text>
+    <circle cx="900" cy="355" r="5" fill="#ccc" stroke="#333"/>
+    <text x="910" y="358" fill="#333">15</text>
+    
+    <!-- Pin 17 - 3.3V -->
+    <rect x="830" y="369" width="60" height="18" rx="2" fill="#ff5722"/>
+    <text x="860" y="382" text-anchor="middle" fill="#fff">3.3V</text>
+    <circle cx="900" cy="378" r="5" fill="#ff5722" stroke="#333"/>
+    <text x="910" y="381" fill="#333">17</text>
+    
+    <!-- Pin 19 - GPIO 10 (MOSI) - ACTIVE -->
+    <rect x="830" y="392" width="60" height="18" rx="2" fill="#2196f3"/>
+    <text x="860" y="405" text-anchor="middle" fill="#fff">MOSI</text>
+    <circle cx="900" cy="401" r="5" fill="#2196f3" stroke="#333"/>
+    <text x="910" y="404" fill="#333">19</text>
+    
+    <!-- Pin 21 - GPIO 9 (MISO) - ACTIVE -->
+    <rect x="830" y="415" width="60" height="18" rx="2" fill="#ff5722"/>
+    <text x="860" y="428" text-anchor="middle" fill="#fff">MISO</text>
+    <circle cx="900" cy="424" r="5" fill="#ff5722" stroke="#333"/>
+    <text x="910" y="427" fill="#333">21</text>
+    
+    <!-- Pin 23 - GPIO 11 (SCLK) - ACTIVE -->
+    <rect x="830" y="438" width="60" height="18" rx="2" fill="#ffeb3b"/>
+    <text x="860" y="451" text-anchor="middle" fill="#333">SCLK</text>
+    <circle cx="900" cy="447" r="5" fill="#ffeb3b" stroke="#333"/>
+    <text x="910" y="450" fill="#333">23</text>
+  </g>
+  
+  <!-- Right column (even pins) -->
+  <g font-family="monospace" font-size="9">
+    <!-- Pin 2 - 5V -->
+    <text x="1020" y="197" fill="#333">2</text>
+    <circle cx="1030" cy="194" r="5" fill="#d32f2f" stroke="#333"/>
+    <rect x="1040" y="185" width="60" height="18" rx="2" fill="#d32f2f"/>
+    <text x="1070" y="198" text-anchor="middle" fill="#fff">5V</text>
+    
+    <!-- Pin 4 - 5V -->
+    <text x="1020" y="220" fill="#333">4</text>
+    <circle cx="1030" cy="217" r="5" fill="#d32f2f" stroke="#333"/>
+    <rect x="1040" y="208" width="60" height="18" rx="2" fill="#d32f2f"/>
+    <text x="1070" y="221" text-anchor="middle" fill="#fff">5V</text>
+    
+    <!-- Pin 6 - GND -->
+    <text x="1020" y="243" fill="#333">6</text>
+    <circle cx="1030" cy="240" r="5" fill="#333" stroke="#333"/>
+    <rect x="1040" y="231" width="60" height="18" rx="2" fill="#333"/>
+    <text x="1070" y="244" text-anchor="middle" fill="#fff">GND</text>
+    
+    <!-- Pin 8 - GPIO 14 (TXD) -->
+    <text x="1020" y="266" fill="#333">8</text>
+    <circle cx="1030" cy="263" r="5" fill="#ccc" stroke="#333"/>
+    <rect x="1040" y="254" width="60" height="18" rx="2" fill="#ccc"/>
+    <text x="1070" y="267" text-anchor="middle" fill="#333">GPIO14</text>
+    
+    <!-- Pin 10 - GPIO 15 (RXD) -->
+    <text x="1020" y="289" fill="#333">10</text>
+    <circle cx="1030" cy="286" r="5" fill="#ccc" stroke="#333"/>
+    <rect x="1040" y="277" width="60" height="18" rx="2" fill="#ccc"/>
+    <text x="1070" y="290" text-anchor="middle" fill="#333">GPIO15</text>
+    
+    <!-- Pin 12 - GPIO 18 (for strobe) -->
+    <text x="1020" y="312" fill="#333">12</text>
+    <circle cx="1030" cy="309" r="5" fill="#9c27b0" stroke="#333"/>
+    <rect x="1040" y="300" width="60" height="18" rx="2" fill="#9c27b0"/>
+    <text x="1070" y="313" text-anchor="middle" fill="#fff">GPIO18</text>
+    
+    <!-- Pin 14 - GND -->
+    <text x="1020" y="335" fill="#333">14</text>
+    <circle cx="1030" cy="332" r="5" fill="#333" stroke="#333"/>
+    <rect x="1040" y="323" width="60" height="18" rx="2" fill="#333"/>
+    <text x="1070" y="336" text-anchor="middle" fill="#fff">GND</text>
+    
+    <!-- Pin 16 - GPIO 23 -->
+    <text x="1020" y="358" fill="#333">16</text>
+    <circle cx="1030" cy="355" r="5" fill="#ccc" stroke="#333"/>
+    <rect x="1040" y="346" width="60" height="18" rx="2" fill="#ccc"/>
+    <text x="1070" y="359" text-anchor="middle" fill="#333">GPIO23</text>
+    
+    <!-- Pin 18 - GPIO 24 -->
+    <text x="1020" y="381" fill="#333">18</text>
+    <circle cx="1030" cy="378" r="5" fill="#ccc" stroke="#333"/>
+    <rect x="1040" y="369" width="60" height="18" rx="2" fill="#ccc"/>
+    <text x="1070" y="382" text-anchor="middle" fill="#333">GPIO24</text>
+    
+    <!-- Pin 20 - GND -->
+    <text x="1020" y="404" fill="#333">20</text>
+    <circle cx="1030" cy="401" r="5" fill="#333" stroke="#333"/>
+    <rect x="1040" y="392" width="60" height="18" rx="2" fill="#333"/>
+    <text x="1070" y="405" text-anchor="middle" fill="#fff">GND</text>
+    
+    <!-- Pin 22 - GPIO 25 -->
+    <text x="1020" y="427" fill="#333">22</text>
+    <circle cx="1030" cy="424" r="5" fill="#ccc" stroke="#333"/>
+    <rect x="1040" y="415" width="60" height="18" rx="2" fill="#ccc"/>
+    <text x="1070" y="428" text-anchor="middle" fill="#333">GPIO25</text>
+    
+    <!-- Pin 24 - GPIO 8 (CE0) - ACTIVE -->
+    <text x="1020" y="450" fill="#333">24</text>
+    <circle cx="1030" cy="447" r="5" fill="#9c27b0" stroke="#333"/>
+    <rect x="1040" y="438" width="60" height="18" rx="2" fill="#9c27b0"/>
+    <text x="1070" y="451" text-anchor="middle" fill="#fff">CE0</text>
+  </g>
+  
+  <!-- ==================== WIRES FROM BREADBOARD TO PI ==================== -->
+  
+  <!-- 5V from Pi to breadboard power rail (red) -->
+  <path d="M 1030 194 L 780 194 L 780 120 L 730 120" stroke="#d32f2f" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <text x="785" y="155" font-family="Arial, sans-serif" font-size="10" fill="#d32f2f" font-weight="bold">5V Power</text>
+  
+  <!-- GND from Pi to breadboard ground rail (black) -->
+  <path d="M 1030 240 L 770 240 L 770 132 L 730 132" stroke="#333" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <text x="775" y="175" font-family="Arial, sans-serif" font-size="10" fill="#333" font-weight="bold">Ground</text>
+  
+  <!-- 3.3V from Pi Pin 1 to MCP3008 (orange) -->
+  <path d="M 900 194 L 760 194 L 760 120 L 555 120" stroke="#ff5722" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="5,3"/>
+  <text x="650" y="112" font-family="Arial, sans-serif" font-size="9" fill="#ff5722">3.3V for ADC</text>
+  
+  <!-- MOSI (Pin 19) to MCP3008 DIN (blue) -->
+  <path d="M 900 401 L 750 401 L 750 290 L 460 290" stroke="#2196f3" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- MISO (Pin 21) to MCP3008 DOUT (orange) -->
+  <path d="M 900 424 L 740 424 L 740 278 L 460 278" stroke="#ff5722" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- SCLK (Pin 23) to MCP3008 CLK (yellow) -->
+  <path d="M 900 447 L 730 447 L 730 266 L 460 266" stroke="#ffeb3b" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- CE0 (Pin 24) to MCP3008 CS (purple) -->
+  <path d="M 1030 447 L 1030 470 L 720 470 L 720 302 L 460 302" stroke="#9c27b0" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- ==================== WIRE LEGEND ==================== -->
+  <rect x="50" y="500" width="400" height="180" rx="6" fill="#fff" stroke="#333" stroke-width="1"/>
+  <text x="250" y="525" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Wire Color Legend</text>
+  
+  <line x1="70" y1="545" x2="120" y2="545" stroke="#d32f2f" stroke-width="4"/>
+  <text x="130" y="549" font-family="Arial, sans-serif" font-size="11" fill="#333">Red: 5V Power (for HB100 &amp; LM358)</text>
+  
+  <line x1="70" y1="565" x2="120" y2="565" stroke="#ff5722" stroke-width="4"/>
+  <text x="130" y="569" font-family="Arial, sans-serif" font-size="11" fill="#333">Orange: 3.3V Power (for MCP3008 only!)</text>
+  
+  <line x1="70" y1="585" x2="120" y2="585" stroke="#333" stroke-width="4"/>
+  <text x="130" y="589" font-family="Arial, sans-serif" font-size="11" fill="#333">Black: Ground</text>
+  
+  <line x1="70" y1="605" x2="120" y2="605" stroke="#4caf50" stroke-width="4"/>
+  <text x="130" y="609" font-family="Arial, sans-serif" font-size="11" fill="#333">Green: Analog signal (LM358 → ADC CH0)</text>
+  
+  <line x1="70" y1="625" x2="120" y2="625" stroke="#2196f3" stroke-width="4"/>
+  <text x="130" y="629" font-family="Arial, sans-serif" font-size="11" fill="#333">Blue: SPI MOSI (Pi → ADC)</text>
+  
+  <line x1="70" y1="645" x2="120" y2="645" stroke="#ffeb3b" stroke-width="4"/>
+  <text x="130" y="649" font-family="Arial, sans-serif" font-size="11" fill="#333">Yellow: SPI Clock</text>
+  
+  <line x1="70" y1="665" x2="120" y2="665" stroke="#9c27b0" stroke-width="4"/>
+  <text x="130" y="669" font-family="Arial, sans-serif" font-size="11" fill="#333">Purple: SPI Chip Select (CE0)</text>
+  
+  <!-- ==================== CONNECTION TABLE ==================== -->
+  <rect x="480" y="500" width="340" height="180" rx="6" fill="#fff" stroke="#333" stroke-width="1"/>
+  <text x="650" y="525" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Connection Summary</text>
+  
+  <g font-family="monospace" font-size="10" fill="#333">
+    <text x="495" y="545">MCP3008 Pin    →    Raspberry Pi Pin</text>
+    <text x="495" y="565">─────────────────────────────────────</text>
+    <text x="495" y="583">VDD (Pin 16)   →    3.3V (Pin 1)</text>
+    <text x="495" y="599">VREF (Pin 15)  →    3.3V (Pin 1)</text>
+    <text x="495" y="615">AGND (Pin 14)  →    GND (Pin 6)</text>
+    <text x="495" y="631">CLK (Pin 13)   →    SCLK (Pin 23)</text>
+    <text x="495" y="647">DOUT (Pin 12)  →    MISO (Pin 21)</text>
+    <text x="495" y="663">DIN (Pin 11)   →    MOSI (Pin 19)</text>
+    <text x="495" y="679">CS (Pin 10)    →    CE0 (Pin 24)</text>
+  </g>
+  
+  <!-- ==================== IMPORTANT NOTES ==================== -->
+  <rect x="850" y="500" width="300" height="180" rx="6" fill="#fff9c4" stroke="#f9a825" stroke-width="2"/>
+  <text x="1000" y="525" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#f9a825">⚠️ Important Notes</text>
+  
+  <g font-family="Arial, sans-serif" font-size="10" fill="#333">
+    <text x="865" y="550">1. MCP3008 MUST use 3.3V (not 5V!)</text>
+    <text x="875" y="565">   - It's a 3.3V chip and will be damaged by 5V</text>
+    
+    <text x="865" y="590">2. HB100 and LM358 use 5V</text>
+    <text x="875" y="605">   - These need more voltage to operate</text>
+    
+    <text x="865" y="630">3. Double-check all connections before</text>
+    <text x="875" y="645">   powering on!</text>
+    
+    <text x="865" y="670">4. Enable SPI on Pi:</text>
+    <text x="875" y="685" font-family="monospace" font-size="9">   sudo raspi-config → Interface → SPI</text>
+  </g>
+  
+  <!-- ==================== SIGNAL FLOW ==================== -->
+  <rect x="50" y="700" width="1100" height="80" rx="6" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+  <text x="600" y="725" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#4caf50">Signal Flow</text>
+  
+  <g font-family="Arial, sans-serif" font-size="12" fill="#333">
+    <!-- Flow boxes -->
+    <rect x="80" y="740" width="100" height="30" rx="4" fill="#e3f2fd" stroke="#1976d2"/>
+    <text x="130" y="760" text-anchor="middle">HB100</text>
+    
+    <text x="195" y="760">→</text>
+    <text x="210" y="748" font-size="9" fill="#666">~2mV</text>
+    <text x="210" y="770" font-size="9" fill="#666">IF signal</text>
+    
+    <rect x="250" y="740" width="120" height="30" rx="4" fill="#fff3e0" stroke="#f57c00"/>
+    <text x="310" y="760" text-anchor="middle">LM358 Amp</text>
+    
+    <text x="385" y="760">→</text>
+    <text x="400" y="748" font-size="9" fill="#666">~2V p-p</text>
+    <text x="400" y="770" font-size="9" fill="#666">amplified</text>
+    
+    <rect x="450" y="740" width="100" height="30" rx="4" fill="#fce4ec" stroke="#c2185b"/>
+    <text x="500" y="760" text-anchor="middle">MCP3008</text>
+    
+    <text x="565" y="760">→</text>
+    <text x="580" y="748" font-size="9" fill="#666">Digital</text>
+    <text x="580" y="770" font-size="9" fill="#666">0-1023</text>
+    
+    <rect x="630" y="740" width="120" height="30" rx="4" fill="#c8e6c9" stroke="#2e7d32"/>
+    <text x="690" y="760" text-anchor="middle">Raspberry Pi</text>
+    
+    <text x="765" y="760">→</text>
+    <text x="780" y="748" font-size="9" fill="#666">FFT</text>
+    <text x="780" y="770" font-size="9" fill="#666">analysis</text>
+    
+    <rect x="830" y="740" width="100" height="30" rx="4" fill="#fff" stroke="#333"/>
+    <text x="880" y="760" text-anchor="middle">Speed!</text>
+    
+    <text x="945" y="760">→</text>
+    
+    <rect x="970" y="740" width="150" height="30" rx="4" fill="#e1f5fe" stroke="#0288d1"/>
+    <text x="1045" y="760" text-anchor="middle">mph = Hz / 31.36</text>
+  </g>
+  
+  <!-- Version info -->
+  <text x="1150" y="880" font-family="Arial, sans-serif" font-size="10" text-anchor="end" fill="#999">DIY Golf Launch Monitor v1.0 - Phase 1 Wiring</text>
+</svg>
