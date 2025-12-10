@@ -29,14 +29,19 @@ OpenLaunch is an open-source golf launch monitor that measures ball speed using 
 git clone https://github.com/yourusername/openlaunch.git
 cd openlaunch
 
-# Install with uv (recommended)
+# Install uv if you don't have it
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Create venv and install dependencies
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 uv pip install -e .
 
-# Or with pip
-pip install -e .
+# For UI support (web interface)
+uv pip install -e ".[ui]"
 ```
 
-### Basic Usage
+### Basic Usage (CLI)
 
 ```bash
 # Run the launch monitor
@@ -50,6 +55,26 @@ openlaunch --live
 
 # Show radar info
 openlaunch --info
+```
+
+### Web UI
+
+```bash
+# Build the frontend (first time only)
+cd ui && npm install && npm run build && cd ..
+
+# Run the UI server with radar
+openlaunch-server
+
+# Run in mock mode (no radar needed, for development)
+openlaunch-server --mock
+```
+
+Then open http://localhost:8080 in a browser.
+
+For kiosk mode on Raspberry Pi (fullscreen):
+```bash
+chromium-browser --kiosk http://localhost:8080
 ```
 
 ### Python API
@@ -246,9 +271,16 @@ openlaunch/
 ├── src/openlaunch/
 │   ├── __init__.py
 │   ├── ops243.py          # OPS243-A radar driver
-│   └── launch_monitor.py  # Main launch monitor
+│   ├── launch_monitor.py  # Main launch monitor
+│   └── server.py          # WebSocket server for UI
+├── ui/                    # React frontend
+│   ├── src/
+│   │   ├── components/    # React components
+│   │   ├── hooks/         # Custom hooks (WebSocket)
+│   │   └── App.tsx        # Main app
+│   └── package.json
 ├── archive/               # Previous CDM324 approach (reference)
-├── content/               # Documentation & diagrams
+├── docs/                  # Documentation
 ├── pyproject.toml
 └── README.md
 ```
