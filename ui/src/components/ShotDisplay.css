@@ -1,0 +1,134 @@
+.shot-display {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  color: white;
+}
+
+.shot-display--latest {
+  animation: pulse-border 2s ease-out;
+}
+
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(0, 255, 136, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
+  }
+}
+
+.shot-display--empty {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shot-display__waiting {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.shot-display__waiting-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1rem;
+  opacity: 0.5;
+  animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.shot-display__waiting p {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.shot-display__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.metric--primary {
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.metric--primary .metric__value {
+  font-size: 4rem;
+  font-weight: 700;
+  color: #00ff88;
+  line-height: 1;
+}
+
+.metric--secondary .metric__value {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.metric__unit {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 0.25rem;
+}
+
+.metric__label {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 0.5rem;
+}
+
+.metric__range {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 0.25rem;
+}
+
+/* Responsive adjustments for 7" screen (800x480) */
+@media (max-width: 800px) {
+  .shot-display {
+    padding: 1rem;
+  }
+
+  .shot-display__grid {
+    gap: 1rem;
+  }
+
+  .metric--primary .metric__value {
+    font-size: 3rem;
+  }
+
+  .metric--secondary .metric__value {
+    font-size: 2rem;
+  }
+
+  .metric__unit {
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,46 @@
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.connection-status--connected {
+  background: rgba(0, 255, 136, 0.15);
+  color: #00ff88;
+}
+
+.connection-status--disconnected {
+  background: rgba(255, 68, 68, 0.15);
+  color: #ff6b6b;
+}
+
+.connection-status__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.connection-status--connected .connection-status__dot {
+  background: #00ff88;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+}
+
+.connection-status--disconnected .connection-status__dot {
+  background: #ff6b6b;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}

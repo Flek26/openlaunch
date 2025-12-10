@@ -55,3 +55,7 @@ htmlcov/
 
 # Jupyter
 .ipynb_checkpoints/
+
+# UI (Node.js)
+ui/node_modules/
+ui/dist/

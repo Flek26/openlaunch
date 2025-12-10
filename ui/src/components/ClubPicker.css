@@ -1,0 +1,141 @@
+.club-picker {
+  position: relative;
+}
+
+.club-picker__trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.club-picker__trigger:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.club-picker__label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.club-picker__value {
+  font-weight: 700;
+  color: #00ff88;
+  font-size: 1rem;
+}
+
+.club-picker__arrow {
+  width: 16px;
+  height: 16px;
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+.club-picker__arrow--open {
+  transform: rotate(180deg);
+}
+
+.club-picker__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+.club-picker__dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 101;
+  background: #1a1a2e;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  min-width: 280px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.club-picker__section {
+  margin-bottom: 1rem;
+}
+
+.club-picker__section:last-child {
+  margin-bottom: 0;
+}
+
+.club-picker__section-title {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.club-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.club-picker__option {
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  /* Touch-friendly size */
+  min-height: 48px;
+}
+
+.club-picker__option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.club-picker__option:active {
+  transform: scale(0.95);
+}
+
+.club-picker__option--selected {
+  background: rgba(0, 255, 136, 0.2);
+  border-color: #00ff88;
+  color: #00ff88;
+}
+
+/* Responsive for 7" screen */
+@media (max-width: 800px) {
+  .club-picker__dropdown {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 16px 16px 0 0;
+    min-width: auto;
+    padding: 1.5rem;
+  }
+
+  .club-picker__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+  }
+
+  .club-picker__option {
+    min-height: 56px;
+    font-size: 1.125rem;
+  }
+}
