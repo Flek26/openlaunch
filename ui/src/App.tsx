@@ -9,7 +9,7 @@ import './App.css';
 type View = 'live' | 'history';
 
 function App() {
-  const { connected, latestShot, shots, stats, clearSession, setClub, simulateShot } = useSocket();
+  const { connected, latestShot, shots, clearSession, setClub, simulateShot } = useSocket();
   const [currentView, setCurrentView] = useState<View>('live');
   const [selectedClub, setSelectedClub] = useState('driver');
 
@@ -57,7 +57,6 @@ function App() {
         ) : (
           <ShotHistory
             shots={shots}
-            stats={stats}
             onClearSession={clearSession}
           />
         )}

@@ -258,6 +258,7 @@ class LaunchMonitor:
         self._shots: List[Shot] = []
         self._shot_callback: Optional[Callable[[Shot], None]] = None
         self._live_callback: Optional[Callable[[SpeedReading], None]] = None
+        self._current_club: ClubType = ClubType.DRIVER
 
     def connect(self) -> bool:
         """
@@ -393,7 +394,8 @@ class LaunchMonitor:
             timestamp=datetime.now(),
             club_speed_mph=club_speed,
             peak_magnitude=peak_mag,
-            readings=self._current_readings.copy()
+            readings=self._current_readings.copy(),
+            club=self._current_club
         )
 
         self._shots.append(shot)
@@ -471,6 +473,10 @@ class LaunchMonitor:
     def clear_session(self):
         """Clear all recorded shots."""
         self._shots = []
+
+    def set_club(self, club: ClubType):
+        """Set the current club for future shots."""
+        self._current_club = club
 
     def __enter__(self):
         """Context manager entry."""

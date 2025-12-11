@@ -14,13 +14,48 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.stats-summary__header {
+  margin-bottom: 0.75rem;
+}
+
 .stats-summary__title {
   font-size: 1rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin: 0 0 1rem 0;
+  margin: 0;
+}
+
+/* Club Filter Tabs */
+.club-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.club-filter__tab {
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.club-filter__tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.club-filter__tab--active {
+  background: rgba(0, 255, 136, 0.15);
+  border-color: rgba(0, 255, 136, 0.5);
+  color: #00ff88;
 }
 
 .stats-summary__grid {

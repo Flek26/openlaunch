@@ -4,6 +4,7 @@ WebSocket server for OpenLaunch UI.
 Provides real-time shot data to the web frontend via Flask-SocketIO.
 """
 
+import json
 import random
 import statistics
 from datetime import datetime
@@ -75,7 +76,8 @@ def handle_set_club(data):
     club_name = data.get("club", "driver")
     try:
         club = ClubType(club_name)
-        # Update club for future shots
+        if monitor:
+            monitor.set_club(club)
         socketio.emit("club_changed", {"club": club.value})
     except ValueError:
         pass
@@ -109,6 +111,11 @@ def on_shot_detected(shot: Shot):
     """Callback when a shot is detected - emit to all clients."""
     shot_data = shot_to_dict(shot)
     stats = monitor.get_session_stats() if monitor else {}
+
+    # Log shot details
+    log_data = {"shot": shot_data, "session_stats": stats}
+    print(f"[SHOT] {json.dumps(log_data)}")
+
     socketio.emit("shot", {"shot": shot_data, "stats": stats})
 
 
@@ -143,6 +150,7 @@ class MockLaunchMonitor:
         self._shots: List[Shot] = []
         self._running = False
         self._shot_callback = None
+        self._current_club = ClubType.DRIVER
 
     def connect(self):
         """Connect to mock radar (no-op)."""
@@ -172,6 +180,7 @@ class MockLaunchMonitor:
             ball_speed_mph=ball_speed,
             club_speed_mph=club_speed,
             timestamp=datetime.now(),
+            club=self._current_club,
         )
         self._shots.append(shot)
 
@@ -217,6 +226,10 @@ class MockLaunchMonitor:
     def clear_session(self):
         """Clear all recorded shots."""
         self._shots = []
+
+    def set_club(self, club: ClubType):
+        """Set the current club for future shots."""
+        self._current_club = club
 
 
 def main():
