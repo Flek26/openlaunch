@@ -10,6 +10,24 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 PORT=8080
 HOST="localhost"
+MOCK_MODE=false
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --mock|-m)
+            MOCK_MODE=true
+            shift
+            ;;
+        --port|-p)
+            PORT="$2"
+            shift 2
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
 
 # Colors for output
 RED='\033[0;31m'
@@ -63,8 +81,13 @@ if [ ! -d "ui/dist" ]; then
 fi
 
 # Start the server
-log "Starting OpenLaunch server on port $PORT..."
-openlaunch-server --web-port $PORT &
+if [ "$MOCK_MODE" = true ]; then
+    log "Starting OpenLaunch server on port $PORT (MOCK MODE)..."
+    openlaunch-server --web-port $PORT --mock &
+else
+    log "Starting OpenLaunch server on port $PORT..."
+    openlaunch-server --web-port $PORT &
+fi
 SERVER_PID=$!
 
 # Wait for server to be ready
@@ -88,17 +111,18 @@ log "Server is running!"
 log "Launching kiosk browser..."
 
 # Try different browsers in order of preference
+# DISPLAY=:0 allows running on Pi's display when SSHed in
 if command -v chromium-browser &> /dev/null; then
-    chromium-browser --kiosk --noerrdialogs --disable-infobars --disable-session-crashed-bubble "http://$HOST:$PORT" &
+    DISPLAY=:0 chromium-browser --kiosk --noerrdialogs --disable-infobars --disable-session-crashed-bubble "http://$HOST:$PORT" &
     BROWSER_PID=$!
 elif command -v chromium &> /dev/null; then
-    chromium --kiosk --noerrdialogs --disable-infobars --disable-session-crashed-bubble "http://$HOST:$PORT" &
+    DISPLAY=:0 chromium --kiosk --noerrdialogs --disable-infobars --disable-session-crashed-bubble "http://$HOST:$PORT" &
     BROWSER_PID=$!
 elif command -v google-chrome &> /dev/null; then
-    google-chrome --kiosk --noerrdialogs --disable-infobars --disable-session-crashed-bubble "http://$HOST:$PORT" &
+    DISPLAY=:0 google-chrome --kiosk --noerrdialogs --disable-infobars --disable-session-crashed-bubble "http://$HOST:$PORT" &
     BROWSER_PID=$!
 elif command -v firefox &> /dev/null; then
-    firefox --kiosk "http://$HOST:$PORT" &
+    DISPLAY=:0 firefox --kiosk "http://$HOST:$PORT" &
     BROWSER_PID=$!
 else
     warn "No supported browser found. Open http://$HOST:$PORT manually."
