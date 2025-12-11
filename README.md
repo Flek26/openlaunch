@@ -328,6 +328,23 @@ Contributions welcome! Areas of interest:
 - **GUI**: Create a nice visual interface
 - **Mobile app**: Bluetooth connection to phone
 
+### Running Tests
+
+```bash
+# Install dev dependencies
+uv pip install -e ".[ui]"
+uv pip install pytest
+
+# Run tests
+pytest tests/ -v
+```
+
+### Contributing Guidelines
+
+- **Tests required**: All new features and bug fixes should include tests. Run `pytest tests/ -v` to verify all tests pass before submitting a PR.
+- **Code quality**: Code must pass pylint with a score of 9+. Run `pylint src/openlaunch/` to check.
+- **UI changes**: Ensure the UI builds successfully with `cd ui && npm run build`.
+
 ## License
 
 MIT License - see LICENSE file.
