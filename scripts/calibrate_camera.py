@@ -1,0 +1,258 @@
+#!/usr/bin/env python3
+"""
+Camera calibration and testing script.
+
+Use this to dial in detection settings by viewing live camera output
+with ball detection overlays.
+
+Usage:
+    python scripts/calibrate_camera.py              # Live view with detection
+    python scripts/calibrate_camera.py --no-detect  # Just camera feed
+    python scripts/calibrate_camera.py --save       # Save test frames
+    python scripts/calibrate_camera.py --exposure 1000  # Adjust exposure (µs)
+"""
+
+import argparse
+import sys
+import time
+
+try:
+    import cv2
+    import numpy as np
+    CV2_AVAILABLE = True
+except ImportError:
+    CV2_AVAILABLE = False
+    print("OpenCV required: pip install opencv-python")
+    sys.exit(1)
+
+try:
+    from picamera2 import Picamera2
+    PICAMERA_AVAILABLE = True
+except ImportError:
+    PICAMERA_AVAILABLE = False
+
+
+def create_test_frame(width, height, ball_x, ball_y, ball_radius):
+    """Create a synthetic test frame with a white ball."""
+    frame = np.zeros((height, width, 3), dtype=np.uint8)
+    # Add some noise
+    frame += np.random.randint(0, 30, frame.shape, dtype=np.uint8)
+    # Draw white ball
+    cv2.circle(frame, (ball_x, ball_y), ball_radius, (255, 255, 255), -1)
+    return frame
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Camera Calibration Tool")
+    parser.add_argument("--no-detect", action="store_true",
+                        help="Disable ball detection overlay")
+    parser.add_argument("--save", action="store_true",
+                        help="Save frames to disk")
+    parser.add_argument("--mock", action="store_true",
+                        help="Use synthetic frames (no camera)")
+    parser.add_argument("--width", type=int, default=640)
+    parser.add_argument("--height", type=int, default=480)
+    parser.add_argument("--exposure", type=int, default=2000,
+                        help="Exposure time in microseconds")
+    parser.add_argument("--gain", type=float, default=4.0,
+                        help="Analogue gain for IR sensitivity")
+    parser.add_argument("--threshold", type=int, default=200,
+                        help="Brightness threshold (0-255)")
+    parser.add_argument("--min-radius", type=int, default=5)
+    parser.add_argument("--max-radius", type=int, default=50)
+    args = parser.parse_args()
+
+    print("=" * 50)
+    print("  OpenLaunch Camera Calibration")
+    print("=" * 50)
+    print()
+    print("Controls:")
+    print("  q - Quit")
+    print("  s - Save current frame")
+    print("  t - Toggle threshold view")
+    print("  d - Toggle detection overlay")
+    print("  +/- - Adjust threshold")
+    print("  [/] - Adjust min radius")
+    print("  {/} - Adjust max radius")
+    print()
+
+    # Detection settings (can be adjusted live)
+    settings = {
+        "threshold": args.threshold,
+        "min_radius": args.min_radius,
+        "max_radius": args.max_radius,
+        "show_threshold": False,
+        "show_detection": not args.no_detect,
+    }
+
+    camera = None
+    if not args.mock:
+        if not PICAMERA_AVAILABLE:
+            print("picamera2 not available, using mock mode")
+            args.mock = True
+        else:
+            try:
+                camera = Picamera2()
+                config = camera.create_video_configuration(
+                    main={"size": (args.width, args.height), "format": "RGB888"},
+                    controls={
+                        "FrameRate": 30,  # Lower for calibration
+                        "ExposureTime": args.exposure,
+                        "AnalogueGain": args.gain,
+                        "AeEnable": False,
+                    }
+                )
+                camera.configure(config)
+                camera.start()
+                print(f"Camera started: {args.width}x{args.height}")
+                print(f"Exposure: {args.exposure}µs, Gain: {args.gain}")
+            except Exception as e:
+                print(f"Camera error: {e}")
+                print("Falling back to mock mode")
+                args.mock = True
+                camera = None
+
+    if args.mock:
+        print("Using synthetic test frames")
+
+    cv2.namedWindow("Camera", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("Camera", args.width, args.height)
+
+    frame_count = 0
+    ball_x, ball_y = args.width // 2, args.height - 100
+    ball_radius = 20
+    ball_vy = -5  # Moving up
+
+    try:
+        while True:
+            # Capture frame
+            if camera:
+                frame = camera.capture_array()
+            else:
+                # Synthetic moving ball
+                frame = create_test_frame(
+                    args.width, args.height,
+                    ball_x, ball_y, ball_radius
+                )
+                ball_y += ball_vy
+                if ball_y < 50:
+                    ball_y = args.height - 100
+                    ball_radius = 20
+                else:
+                    ball_radius = max(5, ball_radius - 0.2)
+
+            # Convert to grayscale for processing
+            if len(frame.shape) == 3:
+                gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+            else:
+                gray = frame
+
+            display = frame.copy()
+
+            # Apply threshold
+            _, thresh = cv2.threshold(
+                gray, settings["threshold"], 255, cv2.THRESH_BINARY
+            )
+
+            if settings["show_threshold"]:
+                # Show threshold view
+                display = cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR)
+
+            if settings["show_detection"]:
+                # Detect circles
+                blurred = cv2.GaussianBlur(thresh, (5, 5), 0)
+                circles = cv2.HoughCircles(
+                    blurred,
+                    cv2.HOUGH_GRADIENT,
+                    dp=1.2,
+                    minDist=50,
+                    param1=50,
+                    param2=20,
+                    minRadius=settings["min_radius"],
+                    maxRadius=settings["max_radius"]
+                )
+
+                if circles is not None:
+                    circles = np.uint16(np.around(circles))
+                    for i in circles[0, :]:
+                        cx, cy, r = i[0], i[1], i[2]
+                        # Draw detected circle
+                        cv2.circle(display, (cx, cy), r, (0, 255, 0), 2)
+                        # Draw center
+                        cv2.circle(display, (cx, cy), 3, (0, 0, 255), -1)
+                        # Show radius
+                        cv2.putText(
+                            display, f"r={r}",
+                            (cx + 10, cy), cv2.FONT_HERSHEY_SIMPLEX,
+                            0.5, (0, 255, 0), 1
+                        )
+
+            # Draw settings overlay
+            y_offset = 20
+            cv2.putText(display, f"Threshold: {settings['threshold']}",
+                        (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
+            y_offset += 20
+            cv2.putText(display, f"Radius: {settings['min_radius']}-{settings['max_radius']}",
+                        (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
+            y_offset += 20
+            mode = "THRESH" if settings["show_threshold"] else "RGB"
+            cv2.putText(display, f"Mode: {mode}",
+                        (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
+
+            # Calculate histogram of brightness (useful for IR setup)
+            hist = cv2.calcHist([gray], [0], None, [256], [0, 256])
+            max_brightness = np.argmax(hist[100:]) + 100 if np.max(hist[100:]) > 0 else 0
+            y_offset += 20
+            cv2.putText(display, f"Peak brightness: {max_brightness}",
+                        (10, y_offset), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
+
+            cv2.imshow("Camera", display)
+
+            # Handle keyboard input
+            key = cv2.waitKey(30) & 0xFF
+            if key == ord('q'):
+                break
+            elif key == ord('s'):
+                filename = f"frame_{frame_count:04d}.png"
+                cv2.imwrite(filename, frame)
+                print(f"Saved: {filename}")
+            elif key == ord('t'):
+                settings["show_threshold"] = not settings["show_threshold"]
+            elif key == ord('d'):
+                settings["show_detection"] = not settings["show_detection"]
+            elif key == ord('+') or key == ord('='):
+                settings["threshold"] = min(255, settings["threshold"] + 5)
+                print(f"Threshold: {settings['threshold']}")
+            elif key == ord('-'):
+                settings["threshold"] = max(0, settings["threshold"] - 5)
+                print(f"Threshold: {settings['threshold']}")
+            elif key == ord('['):
+                settings["min_radius"] = max(1, settings["min_radius"] - 1)
+                print(f"Min radius: {settings['min_radius']}")
+            elif key == ord(']'):
+                settings["min_radius"] = min(settings["max_radius"], settings["min_radius"] + 1)
+                print(f"Min radius: {settings['min_radius']}")
+            elif key == ord('{'):
+                settings["max_radius"] = max(settings["min_radius"], settings["max_radius"] - 5)
+                print(f"Max radius: {settings['max_radius']}")
+            elif key == ord('}'):
+                settings["max_radius"] = min(200, settings["max_radius"] + 5)
+                print(f"Max radius: {settings['max_radius']}")
+
+            frame_count += 1
+
+    finally:
+        cv2.destroyAllWindows()
+        if camera:
+            camera.stop()
+            camera.close()
+
+    print()
+    print("Final settings:")
+    print(f"  brightness_threshold={settings['threshold']}")
+    print(f"  min_radius={settings['min_radius']}")
+    print(f"  max_radius={settings['max_radius']}")
+
+
+if __name__ == "__main__":
+    main()

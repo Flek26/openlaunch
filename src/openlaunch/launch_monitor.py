@@ -144,6 +144,9 @@ class Shot:
         peak_magnitude: Signal strength of strongest reading
         readings: All raw speed readings for this shot
         club: Club type for distance estimation
+        launch_angle_vertical: Vertical launch angle in degrees (from camera)
+        launch_angle_horizontal: Horizontal launch angle in degrees (from camera)
+        launch_angle_confidence: Confidence in launch angle measurement (0-1)
     """
     ball_speed_mph: float
     timestamp: datetime
@@ -151,6 +154,9 @@ class Shot:
     peak_magnitude: Optional[float] = None
     readings: List[SpeedReading] = field(default_factory=list)
     club: ClubType = ClubType.DRIVER
+    launch_angle_vertical: Optional[float] = None
+    launch_angle_horizontal: Optional[float] = None
+    launch_angle_confidence: Optional[float] = None
 
     @property
     def ball_speed_ms(self) -> float:
@@ -203,7 +209,15 @@ class Shot:
         """
         base = self.estimated_carry_yards
         # ±10% uncertainty without launch angle/spin data
+        # Reduce to ±5% if we have launch angle data
+        if self.has_launch_angle:
+            return (base * 0.95, base * 1.05)
         return (base * 0.90, base * 1.10)
+
+    @property
+    def has_launch_angle(self) -> bool:
+        """Check if launch angle data is available for this shot."""
+        return self.launch_angle_vertical is not None
 
 
 class LaunchMonitor:
