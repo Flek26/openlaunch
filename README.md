@@ -334,7 +334,14 @@ Contributions welcome! Areas of interest:
 
 ### Camera Calibration
 
-If you have the optional camera module for launch angle detection, use the calibration script to tune detection settings:
+If you have the optional camera module for launch angle detection, first install the camera dependencies:
+
+```bash
+# Install camera support (OpenCV, NumPy, picamera2)
+uv pip install -e ".[camera]"
+```
+
+Then use the calibration script to tune detection settings:
 
 ```bash
 # Live view with ball detection overlay
