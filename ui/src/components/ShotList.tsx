@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, memo } from 'react';
 import type { Shot } from '../types/shot';
 import './ShotList.css';
 
@@ -8,13 +8,49 @@ interface ShotListProps {
   shots: Shot[];
 }
 
+interface ShotRowProps {
+  shot: Shot;
+  shotNumber: number;
+}
+
+const ShotRow = memo(function ShotRow({ shot, shotNumber }: ShotRowProps) {
+  return (
+    <div className="shot-row">
+      <span className="shot-row__number">#{shotNumber}</span>
+      <span className="shot-row__club">{shot.club}</span>
+      <span className="shot-row__stat">
+        <span className="shot-row__value">{shot.ball_speed_mph.toFixed(1)}</span>
+        <span className="shot-row__label">mph</span>
+      </span>
+      <span className="shot-row__stat">
+        <span className="shot-row__value">{shot.club_speed_mph ? shot.club_speed_mph.toFixed(1) : '--'}</span>
+        <span className="shot-row__label">club</span>
+      </span>
+      <span className="shot-row__stat">
+        <span className="shot-row__value">{shot.smash_factor ? shot.smash_factor.toFixed(2) : '--'}</span>
+        <span className="shot-row__label">smash</span>
+      </span>
+      <span className="shot-row__stat shot-row__stat--carry">
+        <span className="shot-row__value">{shot.estimated_carry_yards}</span>
+        <span className="shot-row__label">yds</span>
+      </span>
+    </div>
+  );
+});
+
 export function ShotList({ shots }: ShotListProps) {
   const [page, setPage] = useState(0);
 
   const totalPages = Math.ceil(shots.length / SHOTS_PER_PAGE);
-  const reversedShots = [...shots].reverse();
+
+  // Memoize expensive calculations to avoid recomputing on every render
+  const pageShots = useMemo(() => {
+    const reversed = [...shots].reverse();
+    const startIndex = page * SHOTS_PER_PAGE;
+    return reversed.slice(startIndex, startIndex + SHOTS_PER_PAGE);
+  }, [shots, page]);
+
   const startIndex = page * SHOTS_PER_PAGE;
-  const pageShots = reversedShots.slice(startIndex, startIndex + SHOTS_PER_PAGE);
 
   if (shots.length === 0) {
     return (
@@ -27,20 +63,13 @@ export function ShotList({ shots }: ShotListProps) {
   return (
     <div className="shot-list">
       <div className="shot-list__rows">
-        {pageShots.map((shot, index) => {
-          const shotNumber = shots.length - startIndex - index;
-          return (
-            <div key={shot.timestamp} className="shot-row">
-              <span className="shot-row__number">#{shotNumber}</span>
-              <span className="shot-row__club">{shot.club}</span>
-              <span className="shot-row__speed">{shot.ball_speed_mph.toFixed(1)}</span>
-              <span className="shot-row__carry">{shot.estimated_carry_yards} yds</span>
-              {shot.smash_factor && (
-                <span className="shot-row__smash">{shot.smash_factor.toFixed(2)}</span>
-              )}
-            </div>
-          );
-        })}
+        {pageShots.map((shot, index) => (
+          <ShotRow
+            key={shot.timestamp}
+            shot={shot}
+            shotNumber={shots.length - startIndex - index}
+          />
+        ))}
       </div>
 
       {totalPages > 1 && (

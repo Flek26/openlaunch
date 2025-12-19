@@ -13,6 +13,14 @@ export function StatsView({ shots, onClearSession }: StatsViewProps) {
 
   const availableClubs = useMemo(() => getUniqueClubs(shots), [shots]);
 
+  const clubCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const shot of shots) {
+      counts[shot.club] = (counts[shot.club] || 0) + 1;
+    }
+    return counts;
+  }, [shots]);
+
   const filteredShots = useMemo(() => {
     if (selectedClub === null) return shots;
     return shots.filter((s) => s.club === selectedClub);
@@ -38,18 +46,15 @@ export function StatsView({ shots, onClearSession }: StatsViewProps) {
         >
           All ({shots.length})
         </button>
-        {availableClubs.map((club) => {
-          const count = shots.filter((s) => s.club === club).length;
-          return (
-            <button
-              key={club}
-              className={`club-tabs__tab ${selectedClub === club ? 'club-tabs__tab--active' : ''}`}
-              onClick={() => setSelectedClub(club)}
-            >
-              {club.toUpperCase()} ({count})
-            </button>
-          );
-        })}
+        {availableClubs.map((club) => (
+          <button
+            key={club}
+            className={`club-tabs__tab ${selectedClub === club ? 'club-tabs__tab--active' : ''}`}
+            onClick={() => setSelectedClub(club)}
+          >
+            {club.toUpperCase()} ({clubCounts[club] || 0})
+          </button>
+        ))}
       </div>
 
       {/* Stats Grid */}

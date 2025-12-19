@@ -12,7 +12,7 @@ from typing import Optional, List, Callable
 from datetime import datetime
 from enum import Enum
 
-from .ops243 import OPS243Radar, SpeedReading
+from .ops243 import OPS243Radar, SpeedReading, Direction
 
 
 class ClubType(Enum):
@@ -334,6 +334,10 @@ class LaunchMonitor:
 
         # Filter by realistic speeds
         if not min_speed <= reading.speed <= self.MAX_BALL_SPEED_MPH:
+            return
+
+        # Only accept outbound readings (ball/club moving away from radar)
+        if reading.direction != Direction.OUTBOUND:
             return
 
         # Check if this is part of current shot or new shot

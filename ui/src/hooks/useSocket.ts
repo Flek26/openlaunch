@@ -29,9 +29,12 @@ export function useSocket() {
     });
 
     newSocket.on('shot', (data: { shot: Shot; stats: SessionStats }) => {
-      console.log('Shot received:', data);
       setLatestShot(data.shot);
-      setShots((prev) => [...prev, data.shot]);
+      setShots((prev) => {
+        const updated = [...prev, data.shot];
+        // Keep only last 200 shots in UI state to prevent memory issues
+        return updated.length > 200 ? updated.slice(-200) : updated;
+      });
       setStats(data.stats);
     });
 
