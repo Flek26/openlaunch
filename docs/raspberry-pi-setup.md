@@ -23,7 +23,7 @@ Use Raspberry Pi Imager to flash Raspberry Pi OS (64-bit) to your SD card.
 
 ```bash
 cd ~
-git clone https://github.com/yourusername/openlaunch.git
+git clone https://github.com/jewbetcha/openlaunch.git
 cd openlaunch
 ```
 

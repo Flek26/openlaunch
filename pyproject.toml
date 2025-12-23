@@ -47,9 +47,10 @@ openlaunch = "openlaunch.launch_monitor:main"
 openlaunch-server = "openlaunch.server:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/openlaunch"
-Repository = "https://github.com/yourusername/openlaunch"
-Issues = "https://github.com/yourusername/openlaunch/issues"
+Homepage = "https://github.com/jewbetcha/openlaunch"
+Repository = "https://github.com/jewbetcha/openlaunch"
+Issues = "https://github.com/jewbetcha/openlaunch/issues"
+Documentation = "https://github.com/jewbetcha/openlaunch#readme"
 
 [build-system]
 requires = ["hatchling"]

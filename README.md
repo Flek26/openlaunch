@@ -30,7 +30,7 @@ OpenLaunch is an open-source golf launch monitor that measures ball speed using 
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/openlaunch.git
+git clone https://github.com/jewbetcha/openlaunch.git
 cd openlaunch
 
 # Install uv if you don't have it
