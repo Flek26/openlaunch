@@ -77,6 +77,7 @@ def main():
     parser.add_argument("--buffer-count", type=int, default=2, help="Camera buffer count (lower=less latency)")
     parser.add_argument("--fps", type=int, default=60, help="Target camera FPS")
     parser.add_argument("--export-onnx", action="store_true", help="Export model to ONNX and exit")
+    parser.add_argument("--int8", action="store_true", help="Use INT8 quantization when exporting")
     args = parser.parse_args()
 
     if not YOLO_AVAILABLE or not CV2_AVAILABLE:
@@ -95,8 +96,15 @@ def main():
 
     # Export to ONNX if requested
     if args.export_onnx:
-        print(f"Exporting model to ONNX (imgsz={args.imgsz})...")
-        export_path = model.export(format="onnx", imgsz=args.imgsz, half=args.half, simplify=True)
+        quant_str = " with INT8 quantization" if args.int8 else ""
+        print(f"Exporting model to ONNX (imgsz={args.imgsz}){quant_str}...")
+        export_path = model.export(
+            format="onnx",
+            imgsz=args.imgsz,
+            half=args.half and not args.int8,  # Can't use both
+            int8=args.int8,
+            simplify=True
+        )
         print(f"Exported to: {export_path}")
         print("Now run with: --model <path_to_onnx>")
         return 0
