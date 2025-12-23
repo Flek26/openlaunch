@@ -11,7 +11,7 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 PORT=8080
 HOST="localhost"
 MOCK_MODE=false
-CAMERA_MODE=false
+CAMERA_MODE=true  # Camera enabled by default
 CAMERA_MODEL="models/golf_ball_yolo11n.onnx"
 
 # Parse arguments
@@ -23,6 +23,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --camera|-c)
             CAMERA_MODE=true
+            shift
+            ;;
+        --no-camera)
+            CAMERA_MODE=false
             shift
             ;;
         --camera-model)

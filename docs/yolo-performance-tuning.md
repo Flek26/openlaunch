@@ -2,6 +2,17 @@
 
 This guide covers how to optimize YOLO golf ball detection for maximum FPS on Raspberry Pi 5.
 
+## Camera in OpenLaunch UI
+
+The camera is enabled by default when running `start-kiosk.sh`. In the UI:
+- **Header**: Ball detection indicator shows if a ball is detected (click to toggle camera)
+- **Camera Tab**: View live feed with detection overlay
+
+To customize the model used:
+```bash
+./scripts/start-kiosk.sh --camera-model models/golf_ball_yolo11n.onnx
+```
+
 ## Quick Start (Best Balance)
 
 For ~30 FPS with good detection quality:

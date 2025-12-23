@@ -70,12 +70,18 @@ Then open `http://localhost:8080` in a browser.
 ./scripts/start-kiosk.sh
 ```
 
-This starts the server and launches Chromium in fullscreen kiosk mode.
+This starts the server and launches Chromium in fullscreen kiosk mode. Camera is enabled by default if available.
 
 Options:
 ```bash
-# Mock mode
+# Mock mode (no radar)
 ./scripts/start-kiosk.sh --mock
+
+# Disable camera
+./scripts/start-kiosk.sh --no-camera
+
+# Use a custom YOLO model for ball detection
+./scripts/start-kiosk.sh --camera-model models/golf_ball_yolo11n.onnx
 
 # Custom port
 ./scripts/start-kiosk.sh --port 3000
@@ -137,9 +143,9 @@ sudo systemctl daemon-reload
 sudo systemctl restart openlaunch
 ```
 
-## Camera Setup (Optional)
+## Camera Setup (Ball Detection)
 
-For launch angle detection with the Raspberry Pi HQ Camera.
+The camera enables real-time ball detection in the UI. When a ball is detected, a green indicator appears in the header. You can also view the live camera feed with detection overlay in the Camera tab.
 
 ### Install Camera Dependencies
 
@@ -147,7 +153,7 @@ For launch angle detection with the Raspberry Pi HQ Camera.
 # Install system library for picamera2
 sudo apt install libcap-dev
 
-# Install Python packages
+# Install Python packages (includes ultralytics for YOLO)
 uv pip install -e ".[camera]"
 ```
 
@@ -159,7 +165,26 @@ rpicam-hello --list-cameras
 
 # Quick preview test
 rpicam-hello
+
+# Test YOLO detection (see docs/yolo-performance-tuning.md for optimization)
+DISPLAY=:0 python scripts/test_yolo_detection.py \
+  --model models/golf_ball_yolo11n.onnx \
+  --imgsz 256 \
+  --threaded
 ```
+
+### Camera in the UI
+
+When the server is started with camera enabled (default), the UI provides:
+
+1. **Ball Detection Indicator** (header) - Shows if a ball is currently detected
+   - Click to toggle camera on/off
+   - Green = ball detected, Yellow = searching, Gray = disabled
+
+2. **Camera Tab** - View live camera feed
+   - Enable/disable camera and streaming
+   - Shows detection overlay with bounding boxes
+   - Ball detection status with confidence percentage
 
 ### Camera Calibration
 
@@ -259,14 +284,18 @@ openlaunch --info       # Show radar configuration
 ### Server
 
 ```bash
-openlaunch-server           # Start server with radar
-openlaunch-server --mock    # Mock mode (no radar)
-openlaunch-server --web-port 3000  # Custom port
+openlaunch-server                    # Start server with radar
+openlaunch-server --mock             # Mock mode (no radar)
+openlaunch-server --camera           # Enable camera for ball detection
+openlaunch-server --camera-model <path>  # Use custom YOLO model
+openlaunch-server --web-port 3000    # Custom port
 ```
 
 ### Kiosk
 
 ```bash
-./scripts/start-kiosk.sh        # Production mode
-./scripts/start-kiosk.sh --mock # Mock mode
+./scripts/start-kiosk.sh              # Production mode (camera enabled by default)
+./scripts/start-kiosk.sh --mock       # Mock mode
+./scripts/start-kiosk.sh --no-camera  # Disable camera
+./scripts/start-kiosk.sh --camera-model models/golf_ball_yolo11n.onnx  # Custom model
 ```
