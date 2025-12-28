@@ -52,7 +52,7 @@
 }
 
 .shot-display__primary {
-  flex: 1;
+  flex: 1.5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,14 +62,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  flex: 0.8;
+  flex: 0.6;
 }
 
 /* Speed Gauge */
 .speed-gauge {
   position: relative;
   width: 100%;
-  max-width: 280px;
+  max-width: 380px;
   aspect-ratio: 200 / 140;
 }
 
@@ -104,7 +104,7 @@
 
 .speed-gauge__value {
   font-family: var(--font-display);
-  font-size: 3.5rem;
+  font-size: 5rem;
   font-weight: 400;
   color: var(--color-gold);
   line-height: 1;
@@ -124,21 +124,21 @@
 }
 
 .speed-gauge__unit {
-  font-size: 0.875rem;
+  font-size: 1.125rem;
   font-weight: 500;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .speed-gauge__label {
-  font-size: 0.6875rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 /* Metric Cards */
@@ -333,19 +333,19 @@
   }
 
   .speed-gauge {
-    max-width: 200px;
+    max-width: 280px;
   }
 
   .speed-gauge__value {
-    font-size: 2.5rem;
+    font-size: 3.5rem;
   }
 
   .speed-gauge__unit {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
   }
 
   .speed-gauge__label {
-    font-size: 0.5625rem;
+    font-size: 0.6875rem;
   }
 
   .metric-card {

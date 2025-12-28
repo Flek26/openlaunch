@@ -334,13 +334,18 @@ class OPS243Radar:
         """
         Filter by direction.
 
+        Per API doc AN-010-AD:
+        - R+ = Inbound Only Direction (toward radar)
+        - R- = Outbound Only Direction (away from radar)
+        - R| = Both directions
+
         Args:
             direction: Direction.INBOUND, Direction.OUTBOUND, or None for both
         """
         if direction == Direction.INBOUND:
-            self._send_command("R-")  # Negative speeds = inbound (toward radar)
+            self._send_command("R+")  # R+ = inbound only (per API doc)
         elif direction == Direction.OUTBOUND:
-            self._send_command("R+")  # Positive speeds = outbound (away from radar)
+            self._send_command("R-")  # R- = outbound only (per API doc)
         else:
             self._send_command("R|")
 
