@@ -376,7 +376,7 @@ class OPS243Radar:
         When disabled, all speeds are reported as positive.
 
         Args:
-            enabled: True to detect direction (inbound=negative, outbound=positive)
+            enabled: True to detect direction (inbound=positive, outbound=negative)
         """
         # Direction is on by default, R| enables both directions
         if enabled:
@@ -565,7 +565,8 @@ class OPS243Radar:
                 speed = float(data.get('speed', 0))
                 magnitude = data.get('magnitude')
 
-                direction = Direction.OUTBOUND if speed > 0 else Direction.INBOUND
+                # Per OPS243-A convention: negative = outbound (away), positive = inbound (toward)
+                direction = Direction.OUTBOUND if speed < 0 else Direction.INBOUND
 
                 return SpeedReading(
                     speed=abs(speed),
@@ -575,9 +576,9 @@ class OPS243Radar:
                     unit=self._unit
                 )
             # Plain number format
-            # Negative = inbound, positive = outbound
+            # Per OPS243-A convention: negative = outbound (away), positive = inbound (toward)
             speed = float(line)
-            direction = Direction.OUTBOUND if speed > 0 else Direction.INBOUND
+            direction = Direction.OUTBOUND if speed < 0 else Direction.INBOUND
 
             return SpeedReading(
                 speed=abs(speed),

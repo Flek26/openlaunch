@@ -338,11 +338,6 @@ class LaunchMonitor:
             print(f"[FILTER] Speed {reading.speed:.1f} outside range {min_speed}-{self.MAX_BALL_SPEED_MPH}")
             return
 
-        # Filter weak signals (noise, distant objects)
-        if reading.magnitude is not None and reading.magnitude < self.MIN_MAGNITUDE:
-            print(f"[FILTER] Magnitude {reading.magnitude} below minimum {self.MIN_MAGNITUDE}")
-            return
-
         # Only accept outbound readings (ball/club moving away from radar)
         if reading.direction != Direction.OUTBOUND:
             print(f"[FILTER] Direction {reading.direction.value} is not outbound")
