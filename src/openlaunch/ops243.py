@@ -385,19 +385,21 @@ class OPS243Radar:
         self._send_command("OM" if enabled else "Om")
         self._magnitude_enabled = enabled
 
-    def enable_direction_report(self, enabled: bool = True):
+    def clear_direction_filter(self):
         """
-        Enable/disable direction in output.
+        Clear direction filter to allow both directions.
 
-        When enabled, JSON output includes "direction": "inbound"/"outbound" field.
-        This is separate from direction filtering (R+/R-/R|).
+        When the filter is cleared (R|), the sign of the speed value indicates direction:
+        - Positive speed = Inbound (toward radar)
+        - Negative speed = Outbound (away from radar)
 
-        Args:
-            enabled: True to include direction in output
+        This is required to determine direction in software.
         """
-        # OD enables direction field in JSON output
-        # Od disables it (speeds will still have sign convention)
-        self._send_command("OD" if enabled else "Od")
+        cmd = "R|"
+        print(f"[RADAR CONFIG] Clearing direction filter: {cmd} (both directions)")
+        response = self._send_command(cmd)
+        if response:
+            print(f"[RADAR CONFIG] Direction filter response: {response}")
 
     def set_transmit_power(self, level: int):
         """
@@ -419,11 +421,14 @@ class OPS243Radar:
         - 50kHz sample rate (supports up to 347 mph - covers all golf balls)
         - 512 buffer for faster updates (~10-15 Hz report rate)
         - Magnitude reporting enabled
-        - Direction reporting enabled (for filtering inbound/outbound)
+        - Both directions enabled (direction determined by sign of speed)
         - Min speed filter at 10 mph (ignore slow movements)
-        - Direction filtering for outbound only (ball moving away)
         - Peak speed averaging enabled (filters multiple reports to primary speed)
         - Max transmit power for best detection range
+
+        Direction filtering is done in software based on the sign of the speed:
+        - Positive speed = Inbound (toward radar) - ignored
+        - Negative speed = Outbound (away from radar) - recorded as shot
         """
         # Set units to MPH
         self.set_units(SpeedUnit.MPH)
@@ -440,16 +445,16 @@ class OPS243Radar:
         # Enable magnitude to help filter weak signals
         self.enable_magnitude_report(True)
 
-        # Enable direction field in JSON output (critical for filtering)
-        self.enable_direction_report(True)
+        # Clear direction filter to get BOTH directions
+        # Direction is determined by the SIGN of the speed value:
+        # - Positive = inbound (toward radar)
+        # - Negative = outbound (away from radar)
+        # This allows us to filter inbound readings in software
+        self.clear_direction_filter()
 
-        # Minimum speed 50 mph to filter backswing/slow movements
-        # Ball speeds are typically 80+ mph, backswing club speeds are 20-40 mph
-        self.set_min_speed_filter(50)
-
-        # Filter for outbound direction (ball moving away from radar)
-        # Assumes radar is positioned behind the tee
-        self.set_direction_filter(Direction.OUTBOUND)
+        # Minimum speed 10 mph to filter very slow movements
+        # We filter higher speeds (backswing) in software based on direction
+        self.set_min_speed_filter(10)
 
         # Max transmit power for best range
         self.set_transmit_power(0)
@@ -583,6 +588,12 @@ class OPS243Radar:
         """
         Parse a reading from the radar output.
 
+        Direction is determined by the SIGN of the speed value:
+        - Positive speed = Inbound (object moving toward radar)
+        - Negative speed = Outbound (object moving away from radar)
+
+        This requires R| (both directions) mode to be set.
+
         Args:
             line: Raw line from serial output
 
@@ -595,21 +606,17 @@ class OPS243Radar:
                 speed = float(data.get('speed', 0))
                 magnitude = data.get('magnitude')
 
-                # Use the direction field from JSON output if available
-                # JSON format: {"speed":0.58, "direction":"inbound", "time":105, "tick":135}
-                dir_str = data.get('direction', '')
-                if dir_str == 'outbound':
-                    direction = Direction.OUTBOUND
-                elif dir_str == 'inbound':
+                # Direction is determined by the SIGN of the speed value
+                # Per OPS243-A API docs (AN-010-AD):
+                # - Positive speed = Inbound (toward radar)
+                # - Negative speed = Outbound (away from radar)
+                if speed >= 0:
                     direction = Direction.INBOUND
                 else:
-                    # Hardware filter R- is set to "Away Only", so all readings we receive
-                    # are outbound by definition. The sign doesn't indicate direction.
                     direction = Direction.OUTBOUND
-                    logger.debug(f"No direction field, assuming OUTBOUND (hardware filter active)")
 
                 # Log parsed reading for debugging
-                logger.debug(f"PARSED: speed={abs(speed):.2f} dir={direction.value} raw_dir='{dir_str}' mag={magnitude}")
+                logger.debug(f"PARSED: raw_speed={speed:.2f} abs_speed={abs(speed):.2f} dir={direction.value} mag={magnitude}")
 
                 return SpeedReading(
                     speed=abs(speed),
@@ -618,10 +625,15 @@ class OPS243Radar:
                     timestamp=time.time(),
                     unit=self._unit
                 )
-            # Plain number format - hardware filter ensures we only get outbound
+
+            # Plain number format - direction from sign
             speed = float(line)
-            direction = Direction.OUTBOUND
-            logger.debug(f"PARSED (plain): speed={abs(speed):.2f} dir={direction.value}")
+            if speed >= 0:
+                direction = Direction.INBOUND
+            else:
+                direction = Direction.OUTBOUND
+
+            logger.debug(f"PARSED (plain): raw_speed={speed:.2f} abs_speed={abs(speed):.2f} dir={direction.value}")
 
             return SpeedReading(
                 speed=abs(speed),
