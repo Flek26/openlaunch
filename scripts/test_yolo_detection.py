@@ -68,11 +68,11 @@ def main():
     parser.add_argument("--width", type=int, default=640, help="Camera capture width")
     parser.add_argument("--height", type=int, default=480, help="Camera capture height")
     parser.add_argument("--confidence", type=float, default=0.3, help="Minimum confidence threshold")
-    parser.add_argument("--model", type=str, default="models/golf_ball_yolo11n_new.onnx", help="YOLO model to use (use NCNN for Pi)")
+    parser.add_argument("--model", type=str, default="models/golf_ball_yolo11n_new_256.onnx", help="YOLO model to use (use NCNN for Pi)")
     parser.add_argument("--iou", type=float, default=0.5, help="IoU threshold for NMS (lower = fewer overlapping boxes)")
     parser.add_argument("--max-det", type=int, default=1, help="Maximum detections per frame")
     # Performance options
-    parser.add_argument("--imgsz", type=int, default=640, help="Inference input size (320/416/640, smaller=faster)")
+    parser.add_argument("--imgsz", type=int, default=256, help="Inference input size (256/320/640, smaller=faster)")
     parser.add_argument("--half", action="store_true", help="Use FP16 half-precision inference")
     parser.add_argument("--threaded", action="store_true", help="Use separate threads for capture/inference")
     parser.add_argument("--no-display", action="store_true", help="Skip drawing overlays for max speed")

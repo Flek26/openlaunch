@@ -12,7 +12,8 @@ PORT=8080
 HOST="localhost"
 MOCK_MODE=false
 CAMERA_MODE=true  # Camera enabled by default
-CAMERA_MODEL="models/golf_ball_yolo11n_new.onnx"
+CAMERA_MODEL="models/golf_ball_yolo11n_new_256.onnx"
+CAMERA_IMGSZ=256
 ROBOFLOW_MODEL=""
 ROBOFLOW_API_KEY=""
 
@@ -33,6 +34,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --camera-model)
             CAMERA_MODEL="$2"
+            shift 2
+            ;;
+        --camera-imgsz)
+            CAMERA_IMGSZ="$2"
             shift 2
             ;;
         --roboflow-model)
@@ -119,7 +124,7 @@ if [ "$CAMERA_MODE" = true ]; then
             SERVER_CMD="$SERVER_CMD --roboflow-api-key $ROBOFLOW_API_KEY"
         fi
     else
-        SERVER_CMD="$SERVER_CMD --camera-model $CAMERA_MODEL"
+        SERVER_CMD="$SERVER_CMD --camera-model $CAMERA_MODEL --camera-imgsz $CAMERA_IMGSZ"
     fi
 fi
 

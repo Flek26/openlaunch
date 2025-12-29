@@ -92,6 +92,7 @@ class CameraTracker:
         frame_height: int = 480,
         roboflow_api_key: Optional[str] = None,
         roboflow_model_id: Optional[str] = None,
+        imgsz: int = 256,
     ):
         """
         Initialize the camera tracker.
@@ -105,6 +106,7 @@ class CameraTracker:
             frame_height: Camera frame height in pixels
             roboflow_api_key: Roboflow API key (uses Roboflow if provided)
             roboflow_model_id: Roboflow model ID (e.g., "golfballdetector/10")
+            imgsz: YOLO inference input size (256 for speed, 640 for accuracy)
         """
         if not CV2_AVAILABLE:
             raise ImportError("opencv required: pip install opencv-python")
@@ -115,6 +117,9 @@ class CameraTracker:
         self.roboflow_client = None
         self.roboflow_model_id = roboflow_model_id
         self.model_path = model_path
+
+        # Store inference settings
+        self.imgsz = imgsz
 
         if self.use_roboflow:
             if not ROBOFLOW_AVAILABLE:
@@ -132,7 +137,7 @@ class CameraTracker:
             if not YOLO_AVAILABLE:
                 raise ImportError("ultralytics required: pip install ultralytics")
             self.model = YOLO(model_path)
-            print(f"Using local YOLO model: {model_path}")
+            print(f"Using local YOLO model: {model_path} (imgsz={imgsz})")
 
         # Camera calibration
         self.camera_height = camera_height_inches
@@ -218,7 +223,7 @@ class CameraTracker:
         """Run YOLO detection on frame."""
         ball_detections = []
 
-        results = self.model(frame, conf=self.MIN_CONFIDENCE, verbose=False)
+        results = self.model(frame, conf=self.MIN_CONFIDENCE, imgsz=self.imgsz, verbose=False)
 
         for r in results:
             for box in r.boxes:

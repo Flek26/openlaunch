@@ -97,9 +97,10 @@ def static_files(path):
 
 # Camera functions
 def init_camera(
-    model_path: str = "models/golf_ball_yolo11n_new.onnx",
+    model_path: str = "models/golf_ball_yolo11n_new_256.onnx",
     roboflow_model_id: str = None,
     roboflow_api_key: str = None,
+    imgsz: int = 256,
 ):
     """Initialize camera and ball tracker (YOLO or Roboflow)."""
     global camera, camera_tracker  # pylint: disable=global-statement
@@ -113,12 +114,12 @@ def init_camera(
         return False
 
     try:
-        # Initialize PiCamera
+        # Initialize PiCamera with optimized settings for speed
         camera = Picamera2()
         config = camera.create_video_configuration(
             main={"size": (640, 480), "format": "RGB888"},
-            buffer_count=2,
-            controls={"FrameRate": 30}
+            buffer_count=1,  # Minimize latency
+            controls={"FrameRate": 60}  # Higher FPS for ball tracking
         )
         camera.configure(config)
         camera.start()
@@ -129,17 +130,20 @@ def init_camera(
             camera_tracker = CameraTracker(
                 roboflow_model_id=roboflow_model_id,
                 roboflow_api_key=roboflow_api_key,
+                imgsz=imgsz,
             )
             print(f"Camera initialized with Roboflow model: {roboflow_model_id}")
         elif os.path.exists(model_path):
-            camera_tracker = CameraTracker(model_path=model_path)
-            print(f"Camera initialized with local model: {model_path}")
+            camera_tracker = CameraTracker(model_path=model_path, imgsz=imgsz)
+            print(f"Camera initialized with local model: {model_path} (imgsz={imgsz})")
         else:
-            # Try default models
-            for fallback in ["models/golf_ball_yolo11n_new.onnx", "models/golf_ball_yolo11n.pt", "yolov8n.pt"]:
+            # Try default models (256 first, then fallbacks)
+            for fallback in ["models/golf_ball_yolo11n_new_256.onnx", "models/golf_ball_yolo11n_new.onnx", "yolov8n.pt"]:
                 if os.path.exists(fallback):
-                    camera_tracker = CameraTracker(model_path=fallback)
-                    print(f"Camera initialized with fallback model: {fallback}")
+                    # Use 256 imgsz for 256 model, 640 for others
+                    fallback_imgsz = 256 if "256" in fallback else 640
+                    camera_tracker = CameraTracker(model_path=fallback, imgsz=fallback_imgsz)
+                    print(f"Camera initialized with fallback model: {fallback} (imgsz={fallback_imgsz})")
                     break
             else:
                 print("No model found - detection disabled")
@@ -753,8 +757,12 @@ def main():
         "--camera", "-c", action="store_true", help="Enable camera for ball detection"
     )
     parser.add_argument(
-        "--camera-model", default="models/golf_ball_yolo11n_new.onnx",
+        "--camera-model", default="models/golf_ball_yolo11n_new_256.onnx",
         help="Path to YOLO model for ball detection"
+    )
+    parser.add_argument(
+        "--camera-imgsz", type=int, default=256,
+        help="YOLO inference input size (256 for speed, 640 for accuracy)"
     )
     parser.add_argument(
         "--roboflow-model",
@@ -784,12 +792,13 @@ def main():
             model_path=args.camera_model,
             roboflow_model_id=args.roboflow_model,
             roboflow_api_key=args.roboflow_api_key,
+            imgsz=args.camera_imgsz,
         ):
             start_camera_thread()
             if args.roboflow_model:
                 print(f"Camera enabled with Roboflow model: {args.roboflow_model}")
             else:
-                print(f"Camera enabled with local model: {args.camera_model}")
+                print(f"Camera enabled with local model: {args.camera_model} (imgsz={args.camera_imgsz})")
         else:
             print("Camera initialization failed - running without camera")
 
