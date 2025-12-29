@@ -337,7 +337,7 @@ class OPS243Radar:
 
     def set_direction_filter(self, direction: Optional[Direction]):
         """
-        Filter by direction.
+        Filter by direction at the hardware level.
 
         Per API doc AN-010-AD:
         - R+ = Inbound Only Direction (toward radar)
@@ -348,11 +348,22 @@ class OPS243Radar:
             direction: Direction.INBOUND, Direction.OUTBOUND, or None for both
         """
         if direction == Direction.INBOUND:
-            self._send_command("R+")  # R+ = inbound only (per API doc)
+            cmd = "R+"
         elif direction == Direction.OUTBOUND:
-            self._send_command("R-")  # R- = outbound only (per API doc)
+            cmd = "R-"
         else:
-            self._send_command("R|")
+            cmd = "R|"
+
+        # Send command and log
+        print(f"[RADAR CONFIG] Setting direction filter: {cmd}")
+        response = self._send_command(cmd)
+        if response:
+            print(f"[RADAR CONFIG] Direction filter response: {response}")
+
+        # Also try with explicit newline in case that's needed
+        if self.serial and self.serial.is_open:
+            self.serial.write(b'\r\n')
+            time.sleep(0.05)
 
     def enable_json_output(self, enabled: bool = True):
         """
@@ -447,6 +458,11 @@ class OPS243Radar:
 
         # Enable peak speed averaging to get cleaner single-speed reports
         self.enable_peak_averaging(True)
+
+        # Verify settings were applied
+        print("[RADAR CONFIG] Verifying configuration...")
+        filter_settings = self.get_speed_filter()
+        print(f"[RADAR CONFIG] Current filter settings: {filter_settings}")
 
     def enable_peak_averaging(self, enabled: bool = True):
         """
@@ -587,8 +603,11 @@ class OPS243Radar:
                     direction = Direction.INBOUND
                 else:
                     # Fallback to sign convention if direction field missing
-                    direction = Direction.OUTBOUND if speed < 0 else Direction.INBOUND
-                    logger.warning(f"No direction field in JSON, using sign fallback: {direction.value}")
+                    # Per OPS243 API: R+ = inbound, R- = outbound
+                    # So positive speed = inbound (toward), negative speed = outbound (away)
+                    # BUT if hardware filter R- is working, we should only get outbound readings
+                    direction = Direction.INBOUND if speed > 0 else Direction.OUTBOUND
+                    logger.warning(f"No direction field in JSON, speed={speed:.2f}, inferred: {direction.value}")
 
                 # Log parsed reading for debugging
                 logger.debug(f"PARSED: speed={abs(speed):.2f} dir={direction.value} raw_dir='{dir_str}' mag={magnitude}")
@@ -601,9 +620,10 @@ class OPS243Radar:
                     unit=self._unit
                 )
             # Plain number format
-            # Per OPS243-A convention: negative = outbound (away), positive = inbound (toward)
+            # Per OPS243 API: R+ = inbound, R- = outbound
+            # So positive speed = inbound (toward), negative speed = outbound (away)
             speed = float(line)
-            direction = Direction.OUTBOUND if speed < 0 else Direction.INBOUND
+            direction = Direction.INBOUND if speed > 0 else Direction.OUTBOUND
             logger.debug(f"PARSED (plain): speed={abs(speed):.2f} dir={direction.value}")
 
             return SpeedReading(
