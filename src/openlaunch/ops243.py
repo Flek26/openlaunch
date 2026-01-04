@@ -649,6 +649,10 @@ class OPS243Radar:
         - Negative speed = OUTBOUND (away from radar - ball flight)
         - Positive speed = INBOUND (toward radar - backswing)
 
+        With O4 (multi-object) mode, speed and magnitude are arrays.
+        We return the first/strongest reading here; the full array is
+        available via read_speed_multi().
+
         Args:
             line: Raw line from serial output
 
@@ -662,8 +666,22 @@ class OPS243Radar:
         try:
             if self._json_mode and line.startswith('{'):
                 data = json.loads(line)
-                speed = float(data.get('speed', 0))
-                magnitude = data.get('magnitude')
+                speed_data = data.get('speed', 0)
+                magnitude_data = data.get('magnitude')
+
+                # Handle array format from O4 multi-object mode
+                # Arrays are ordered by magnitude (strongest first)
+                if isinstance(speed_data, list):
+                    if not speed_data:
+                        return None
+                    speed = float(speed_data[0])
+                    magnitude = float(magnitude_data[0]) if magnitude_data else None
+
+                    if _show_raw_readings:
+                        print(f"[MULTI] {len(speed_data)} objects: speeds={speed_data} mags={magnitude_data}")
+                else:
+                    speed = float(speed_data)
+                    magnitude = float(magnitude_data) if magnitude_data else None
 
                 # Direction from sign of speed value
                 # Negative = OUTBOUND (away from radar - golf ball flight)
@@ -683,7 +701,7 @@ class OPS243Radar:
                 return SpeedReading(
                     speed=abs(speed),
                     direction=direction,
-                    magnitude=float(magnitude) if magnitude else None,
+                    magnitude=magnitude,
                     timestamp=time.time(),
                     unit=self._unit
                 )

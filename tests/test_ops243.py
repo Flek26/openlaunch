@@ -112,6 +112,30 @@ class TestParseReading:
         assert reading is not None
         assert reading.speed == 142.857
 
+    def test_parse_json_array_format(self):
+        """Parse O4 multi-object array format."""
+        # O4 mode outputs arrays for speed and magnitude
+        line = '{"magnitude":[606.71, 352.58, 230.87], "speed":[-10.90, -12.26, -17.71]}'
+        reading = self.radar._parse_reading(line)
+
+        assert reading is not None
+        # Should take first (strongest) reading
+        assert reading.speed == 10.90  # Absolute value
+        assert reading.magnitude == 606.71
+        # Negative speed = OUTBOUND
+        assert reading.direction == Direction.OUTBOUND
+
+    def test_parse_json_array_inbound(self):
+        """Parse array format with positive (inbound) speed."""
+        line = '{"magnitude":[500.0, 300.0], "speed":[15.5, 12.3]}'
+        reading = self.radar._parse_reading(line)
+
+        assert reading is not None
+        assert reading.speed == 15.5
+        assert reading.magnitude == 500.0
+        # Positive speed = INBOUND
+        assert reading.direction == Direction.INBOUND
+
 
 class TestConfigureForGolf:
     """Tests for golf configuration."""
