@@ -32,6 +32,15 @@ import serial.tools.list_ports
 logger = logging.getLogger("ops243")
 raw_logger = logging.getLogger("ops243.raw")
 
+# Global flag to control raw reading console output
+_show_raw_readings = False
+
+
+def set_show_raw_readings(enabled: bool):
+    """Enable/disable printing raw radar readings to console."""
+    global _show_raw_readings  # pylint: disable=global-statement
+    _show_raw_readings = enabled
+
 
 class SpeedUnit(Enum):
     """Speed units supported by OPS243-A."""
@@ -620,7 +629,8 @@ class OPS243Radar:
                     direction = Direction.OUTBOUND
 
                 # Debug: print raw reading to console (sign indicates direction)
-                print(f"[RAW] {speed:+.1f} mph -> {direction.value} (mag: {magnitude})")
+                if _show_raw_readings:
+                    print(f"[RAW] {speed:+.1f} mph -> {direction.value} (mag: {magnitude})")
 
                 # Log parsed reading for debugging
                 logger.debug(f"PARSED: raw_speed={speed:.2f} abs_speed={abs(speed):.2f} dir={direction.value} mag={magnitude}")
@@ -642,7 +652,8 @@ class OPS243Radar:
                 direction = Direction.OUTBOUND
 
             # Debug: print raw reading to console
-            print(f"[RAW] {speed:+.1f} mph -> {direction.value}")
+            if _show_raw_readings:
+                print(f"[RAW] {speed:+.1f} mph -> {direction.value}")
 
             logger.debug(f"PARSED (plain): raw_speed={speed:.2f} abs_speed={abs(speed):.2f} dir={direction.value}")
 

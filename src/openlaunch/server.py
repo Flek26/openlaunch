@@ -20,7 +20,7 @@ from flask_socketio import SocketIO
 from flask_cors import CORS
 
 from .launch_monitor import LaunchMonitor, Shot, ClubType
-from .ops243 import SpeedReading, Direction
+from .ops243 import SpeedReading, Direction, set_show_raw_readings
 from .session_logger import init_session_logger, get_session_logger
 
 # Configure logging
@@ -816,7 +816,8 @@ def main():
         "--web-port", type=int, default=8080, help="Web server port (default: 8080)"
     )
     parser.add_argument("--debug", "-d", action="store_true", help="Enable debug mode")
-    parser.add_argument("--radar-log", action="store_true", help="Log raw radar data to console")
+    parser.add_argument("--radar-log", action="store_true", help="Log raw radar data to console (Python logging)")
+    parser.add_argument("--show-raw", action="store_true", help="Show raw radar readings in console (signed values)")
     parser.add_argument(
         "--camera", "-c", action="store_true", help="Enable camera for ball detection"
     )
@@ -881,6 +882,11 @@ def main():
         radar_logger.setLevel(logging.DEBUG)
         radar_raw_logger.setLevel(logging.DEBUG)
         print("Radar raw logging ENABLED - all readings will be logged")
+
+    # Enable raw reading console output if requested
+    if args.show_raw:
+        set_show_raw_readings(True)
+        print("Raw radar readings display ENABLED - signed speed values will be shown")
 
     # Start the monitor
     start_monitor(port=args.port, mock=args.mock)
