@@ -30,4 +30,8 @@ env_logger = "0.11"
 ctrlc = "3.4"
 # Random number generation for mock mode
 rand = "0.8"
+# HTTP client for OpenGolfSim integration
+reqwest = { version = "0.11", features = ["json"] }
+# Async runtime for HTTP requests
+tokio = { version = "1.0", features = ["full"] }
 
