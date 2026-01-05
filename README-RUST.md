@@ -35,6 +35,8 @@ Phase 1 replaces the Python signal loop with a Rust binary that:
 
 ## Building
 
+### Linux/macOS
+
 ```bash
 # Install Rust if you haven't already
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -46,7 +48,29 @@ cargo build --release
 cargo run --release -- --help
 ```
 
+### Windows
+
+**Important**: You need both Rust AND a C compiler (for native dependencies).
+
+1. **Install Rust**: Download and run [rustup-init.exe](https://rustup.rs/)
+
+2. **Install C++ Build Tools**: Download [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+   - Select "C++ build tools" workload during installation
+
+3. **Restart your terminal** after both installations
+
+4. **Build**:
+   ```powershell
+   cargo build --release
+   ```
+
+See [SETUP-WINDOWS.md](SETUP-WINDOWS.md) for detailed Windows setup instructions.
+
+**Alternative**: Use WSL (Windows Subsystem for Linux) to avoid Windows-specific build tool issues.
+
 ## Usage
+
+### With Real Hardware
 
 ```bash
 # Auto-detect radar port
@@ -61,6 +85,30 @@ cargo run --release -- --live
 # Show radar info and exit
 cargo run --release -- --info
 ```
+
+### Testing Without Hardware (Mock Mode)
+
+```bash
+# Run in mock mode (auto-generates shots every 5 seconds)
+cargo run --release -- --mock
+
+# Custom shot interval (e.g., every 3 seconds)
+cargo run --release -- --mock --mock-interval 3.0
+
+# Show live readings in mock mode
+cargo run --release -- --mock --live
+
+# Show mock radar info
+cargo run --release -- --mock --info
+```
+
+The mock radar simulates realistic golf shots with:
+- Club readings (60-120 mph, higher magnitude)
+- Ball readings (80-180 mph, lower magnitude)
+- Realistic timing and smash factors
+- Automatic shot generation at configurable intervals
+
+See [TESTING.md](TESTING.md) for detailed testing guide.
 
 ## Example Output
 
