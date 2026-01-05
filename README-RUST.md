@@ -35,6 +35,8 @@ Phase 1 replaces the Python signal loop with a Rust binary that:
 
 ## Building
 
+### Linux/macOS
+
 ```bash
 # Install Rust if you haven't already
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -45,6 +47,26 @@ cargo build --release
 # Run
 cargo run --release -- --help
 ```
+
+### Windows
+
+**Important**: You need both Rust AND a C compiler (for native dependencies).
+
+1. **Install Rust**: Download and run [rustup-init.exe](https://rustup.rs/)
+
+2. **Install C++ Build Tools**: Download [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+   - Select "C++ build tools" workload during installation
+
+3. **Restart your terminal** after both installations
+
+4. **Build**:
+   ```powershell
+   cargo build --release
+   ```
+
+See [SETUP-WINDOWS.md](SETUP-WINDOWS.md) for detailed Windows setup instructions.
+
+**Alternative**: Use WSL (Windows Subsystem for Linux) to avoid Windows-specific build tool issues.
 
 ## Usage
 
