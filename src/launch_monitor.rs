@@ -1,10 +1,18 @@
 use anyhow::Result;
 use std::time::{Duration, Instant};
-use crate::ops243::OPS243Radar;
 use crate::shot::{ClubType, Direction, Shot, SpeedReading};
 
-pub struct LaunchMonitor {
-    radar: OPS243Radar,
+// Trait for radar interface (real or mock)
+pub trait RadarInterface {
+    fn connect(&mut self) -> Result<()>;
+    fn disconnect(&mut self);
+    fn get_info(&mut self) -> Result<std::collections::HashMap<String, String>>;
+    fn configure_for_golf(&mut self) -> Result<()>;
+    fn read_speed(&mut self) -> Result<Option<SpeedReading>>;
+}
+
+pub struct LaunchMonitor<R: RadarInterface> {
+    radar: R,
     show_live: bool,
     
     // Shot detection state
@@ -29,8 +37,8 @@ pub struct LaunchMonitor {
     detect_club_speed: bool,
 }
 
-impl LaunchMonitor {
-    pub fn new(radar: OPS243Radar, show_live: bool) -> Self {
+impl<R: RadarInterface> LaunchMonitor<R> {
+    pub fn new(radar: R, show_live: bool) -> Self {
         Self {
             radar,
             show_live,
@@ -72,7 +80,7 @@ impl LaunchMonitor {
                 break;
             }
 
-            // Read speed from radar
+            // Read speed from radar (works with both real and mock)
             match self.radar.read_speed() {
                 Ok(Some(reading)) => {
                     self.on_reading(reading);

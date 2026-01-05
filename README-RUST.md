@@ -48,6 +48,8 @@ cargo run --release -- --help
 
 ## Usage
 
+### With Real Hardware
+
 ```bash
 # Auto-detect radar port
 cargo run --release
@@ -61,6 +63,30 @@ cargo run --release -- --live
 # Show radar info and exit
 cargo run --release -- --info
 ```
+
+### Testing Without Hardware (Mock Mode)
+
+```bash
+# Run in mock mode (auto-generates shots every 5 seconds)
+cargo run --release -- --mock
+
+# Custom shot interval (e.g., every 3 seconds)
+cargo run --release -- --mock --mock-interval 3.0
+
+# Show live readings in mock mode
+cargo run --release -- --mock --live
+
+# Show mock radar info
+cargo run --release -- --mock --info
+```
+
+The mock radar simulates realistic golf shots with:
+- Club readings (60-120 mph, higher magnitude)
+- Ball readings (80-180 mph, lower magnitude)
+- Realistic timing and smash factors
+- Automatic shot generation at configurable intervals
+
+See [TESTING.md](TESTING.md) for detailed testing guide.
 
 ## Example Output
 

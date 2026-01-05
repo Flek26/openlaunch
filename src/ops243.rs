@@ -2,8 +2,10 @@ use anyhow::{Context, Result};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::time::Duration;
+use serialport::SerialPort;
 
 use crate::shot::{Direction, SpeedReading};
+use crate::launch_monitor::RadarInterface;
 
 pub struct OPS243Radar {
     port_name: Option<String>,
@@ -27,7 +29,7 @@ impl OPS243Radar {
         })
     }
 
-    pub fn connect(&mut self) -> Result<()> {
+    fn connect_internal(&mut self) -> Result<()> {
         let port_name = if let Some(ref name) = self.port_name {
             name.clone()
         } else {
@@ -53,7 +55,7 @@ impl OPS243Radar {
         Ok(())
     }
 
-    pub fn disconnect(&mut self) {
+    fn disconnect_internal(&mut self) {
         if let Some(mut port) = self.port.take() {
             let _ = port.clear(serialport::ClearBuffer::All);
         }
@@ -123,7 +125,7 @@ impl OPS243Radar {
         Ok(response.trim().to_string())
     }
 
-    pub fn get_info(&mut self) -> Result<HashMap<String, String>> {
+    fn get_info_internal(&mut self) -> Result<HashMap<String, String>> {
         let response = self.send_command("??")?;
         let mut info = HashMap::new();
 
@@ -143,7 +145,7 @@ impl OPS243Radar {
         Ok(info)
     }
 
-    pub fn configure_for_golf(&mut self) -> Result<()> {
+    fn configure_for_golf_internal(&mut self) -> Result<()> {
         // Set units to MPH
         self.send_command("US")?;
         self.unit = "mph".to_string();
@@ -183,7 +185,7 @@ impl OPS243Radar {
         Ok(())
     }
 
-    pub fn read_speed(&mut self) -> Result<Option<SpeedReading>> {
+    fn read_speed_internal(&mut self) -> Result<Option<SpeedReading>> {
         let port = self.port.as_mut()
             .context("Not connected to radar")?;
 
@@ -291,9 +293,31 @@ impl OPS243Radar {
     }
 }
 
+impl RadarInterface for OPS243Radar {
+    fn connect(&mut self) -> Result<()> {
+        self.connect_internal()
+    }
+
+    fn disconnect(&mut self) {
+        self.disconnect_internal();
+    }
+
+    fn get_info(&mut self) -> Result<std::collections::HashMap<String, String>> {
+        self.get_info_internal()
+    }
+
+    fn configure_for_golf(&mut self) -> Result<()> {
+        self.configure_for_golf_internal()
+    }
+
+    fn read_speed(&mut self) -> Result<Option<SpeedReading>> {
+        self.read_speed_internal()
+    }
+}
+
 impl Drop for OPS243Radar {
     fn drop(&mut self) {
-        self.disconnect();
+        self.disconnect_internal();
     }
 }
 
