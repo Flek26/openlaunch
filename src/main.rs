@@ -2,6 +2,7 @@ mod ops243;
 mod launch_monitor;
 mod shot;
 mod mock_radar;
+mod opengolfsim;
 
 use anyhow::Result;
 use clap::Parser;
@@ -9,6 +10,7 @@ use clap::Parser;
 use ops243::OPS243Radar;
 use launch_monitor::{LaunchMonitor, RadarInterface};
 use mock_radar::MockRadar;
+use opengolfsim::OpenGolfSimClient;
 
 #[derive(Parser, Debug)]
 #[command(name = "openlaunch-rs")]
@@ -30,9 +32,25 @@ struct Args {
     #[arg(short, long)]
     mock: bool,
 
-    /// Shot interval in seconds for mock mode (auto-generate shots)
-    #[arg(long, default_value = "5.0")]
-    mock_interval: f64,
+        /// Shot interval in seconds for mock mode (auto-generate shots)
+        #[arg(long, default_value = "20.0")]
+        mock_interval: f64,
+
+    /// Enable OpenGolfSim integration
+    #[arg(long)]
+    opengolfsim: bool,
+
+    /// OpenGolfSim host (default: localhost)
+    #[arg(long, default_value = "localhost")]
+    opengolfsim_host: String,
+
+    /// OpenGolfSim port (default: 3111 per OpenGolfSim API docs)
+    #[arg(long, default_value = "3111")]
+    opengolfsim_port: u16,
+
+    /// Use HTTP instead of TCP for OpenGolfSim
+    #[arg(long)]
+    opengolfsim_http: bool,
 }
 
 fn main() -> Result<()> {
@@ -73,8 +91,24 @@ fn main() -> Result<()> {
         println!("Press Ctrl+C to stop");
         println!();
         
+        // Setup OpenGolfSim integration if enabled
+        let opengolfsim_client = if args.opengolfsim {
+            let client = OpenGolfSimClient::new(
+                args.opengolfsim_host.clone(),
+                args.opengolfsim_port,
+                args.opengolfsim_http,
+            );
+            println!("OpenGolfSim integration enabled: {}:{} ({})",
+                args.opengolfsim_host, args.opengolfsim_port,
+                if args.opengolfsim_http { "HTTP" } else { "TCP" });
+            println!("Note: If OpenGolfSim is not running, connection errors will be logged as debug messages.");
+            Some(client)
+        } else {
+            None
+        };
+        
         // Create launch monitor with mock radar
-        let mut monitor = LaunchMonitor::new(radar, args.live);
+        let mut monitor = LaunchMonitor::with_opengolfsim(radar, args.live, opengolfsim_client);
         monitor.run()?;
     } else {
         let mut radar = OPS243Radar::new(args.port.clone())?;
@@ -97,8 +131,24 @@ fn main() -> Result<()> {
         println!("Press Ctrl+C to stop");
         println!();
         
+        // Setup OpenGolfSim integration if enabled
+        let opengolfsim_client = if args.opengolfsim {
+            let client = OpenGolfSimClient::new(
+                args.opengolfsim_host.clone(),
+                args.opengolfsim_port,
+                args.opengolfsim_http,
+            );
+            println!("OpenGolfSim integration enabled: {}:{} ({})",
+                args.opengolfsim_host, args.opengolfsim_port,
+                if args.opengolfsim_http { "HTTP" } else { "TCP" });
+            println!("Note: If OpenGolfSim is not running, connection errors will be logged as debug messages.");
+            Some(client)
+        } else {
+            None
+        };
+        
         // Create launch monitor with real radar
-        let mut monitor = LaunchMonitor::new(radar, args.live);
+        let mut monitor = LaunchMonitor::with_opengolfsim(radar, args.live, opengolfsim_client);
         monitor.run()?;
     }
 

@@ -1,4 +1,5 @@
 use anyhow::Result;
+use std::sync::Arc;
 use std::time::{Duration, Instant};
 use crate::shot::{ClubType, Direction, Shot, SpeedReading};
 
@@ -14,6 +15,7 @@ pub trait RadarInterface {
 pub struct LaunchMonitor<R: RadarInterface> {
     radar: R,
     show_live: bool,
+    opengolfsim_client: Option<Arc<std::sync::Mutex<crate::opengolfsim::OpenGolfSimClient>>>,
     
     // Shot detection state
     current_readings: Vec<SpeedReading>,
@@ -39,9 +41,35 @@ pub struct LaunchMonitor<R: RadarInterface> {
 
 impl<R: RadarInterface> LaunchMonitor<R> {
     pub fn new(radar: R, show_live: bool) -> Self {
+        Self::with_opengolfsim(radar, show_live, None)
+    }
+
+    pub fn with_opengolfsim(
+        radar: R,
+        show_live: bool,
+        mut opengolfsim_client: Option<crate::opengolfsim::OpenGolfSimClient>,
+    ) -> Self {
+        // Connect to OpenGolfSim if enabled
+        if let Some(ref mut client) = opengolfsim_client {
+            match client.connect() {
+                Ok(()) => {
+                    // Wait a bit for OpenGolfSim to be ready
+                    std::thread::sleep(Duration::from_millis(500));
+                    log::info!("[OPENGOLFSIM] Ready to send shots");
+                }
+                Err(e) => {
+                    log::info!("[OPENGOLFSIM] OpenGolfSim not available at startup: {}. Will retry when shots are detected.", e);
+                }
+            }
+        }
+        
+        // Wrap in Arc<Mutex<>> for thread-safe access
+        let opengolfsim_client = opengolfsim_client.map(|c| Arc::new(std::sync::Mutex::new(c)));
+        
         Self {
             radar,
             show_live,
+            opengolfsim_client,
             current_readings: Vec::new(),
             last_reading_time: None,
             shot_start_time: None,
@@ -62,6 +90,8 @@ impl<R: RadarInterface> LaunchMonitor<R> {
     }
 
     pub fn run(&mut self) -> Result<()> {
+        // Connection already established in with_opengolfsim, ready status already sent
+
         // Setup Ctrl+C handler
         let (tx, rx) = std::sync::mpsc::channel();
         ctrlc::set_handler(move || {
@@ -313,6 +343,38 @@ impl<R: RadarInterface> LaunchMonitor<R> {
         }
         println!("{}", "-".repeat(40));
         println!();
+
+        // Send to OpenGolfSim if enabled (spawn in background thread)
+        if let Some(ref client) = self.opengolfsim_client {
+            let client = client.clone(); // Arc clones the pointer, not the data
+            let shot = shot.clone();
+            std::thread::spawn(move || {
+                let rt = tokio::runtime::Runtime::new().unwrap();
+                rt.block_on(async move {
+                    if let Ok(mut client) = client.lock() {
+                        log::debug!("[OPENGOLFSIM] Attempting to send shot (ballSpeed: {:.1} mph)", shot.ball_speed_mph);
+                        match client.send_shot(&shot).await {
+                            Ok(_) => {
+                                log::info!("[OPENGOLFSIM] Shot sent successfully");
+                            }
+                            Err(e) => {
+                                // Log connection errors as debug (OpenGolfSim not running)
+                                // Log other errors as warnings
+                                let error_str = e.to_string();
+                                if error_str.contains("refused") || error_str.contains("timeout") || 
+                                   error_str.contains("connection") || error_str.contains("not established") {
+                                    log::debug!("[OPENGOLFSIM] Could not send shot (OpenGolfSim may not be running): {}", error_str);
+                                } else {
+                                    log::warn!("[OPENGOLFSIM] Failed to send shot: {}", e);
+                                }
+                            }
+                        }
+                    } else {
+                        log::warn!("[OPENGOLFSIM] Failed to acquire client lock");
+                    }
+                });
+            });
+        }
     }
 }
 

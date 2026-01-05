@@ -170,6 +170,23 @@ The Rust implementation provides:
 - **Lower CPU usage**: More efficient memory management
 - **Better real-time performance**: No garbage collection pauses
 
+## OpenGolfSim Integration
+
+OpenLaunch can send shot data to OpenGolfSim running on the same PC:
+
+```bash
+# TCP mode (default)
+cargo run --release -- --opengolfsim
+
+# HTTP mode
+cargo run --release -- --opengolfsim --opengolfsim-http
+
+# Custom host/port
+cargo run --release -- --opengolfsim --opengolfsim-host localhost --opengolfsim-port 8080
+```
+
+See [OPENGOLFSIM-INTEGRATION.md](OPENGOLFSIM-INTEGRATION.md) for details.
+
 ## Next Steps (Phase 2)
 
 Phase 2 will add:
