@@ -86,7 +86,7 @@ impl<R: RadarInterface> LaunchMonitor<R> {
             club_speed_min_ratio: 0.50,
             club_speed_max_ratio: 0.85,
             min_magnitude: 20.0,
-            max_magnitude: 100.0,
+            max_magnitude: 10000.0, //increase size for mock
             max_shot_duration_sec: 0.3,
             smash_factor_min: 1.1,
             smash_factor_max: 1.7,
@@ -173,7 +173,7 @@ impl<R: RadarInterface> LaunchMonitor<R> {
         // Filter by magnitude (signal strength)
         if let Some(magnitude) = reading.magnitude {
             if magnitude < self.min_magnitude || magnitude > self.max_magnitude {
-                log::debug!(
+                log::warn!(
                     "[FILTER] Magnitude {:.1} outside range {}-{}",
                     magnitude,
                     self.min_magnitude,
@@ -236,11 +236,17 @@ impl<R: RadarInterface> LaunchMonitor<R> {
             return;
         }
 
-        // Check max shot duration
-        if let Some(start_time) = self.shot_start_time {
-            let duration = start_time.elapsed().as_secs_f64();
+        // Sort readings by timestamp for temporal analysis
+        let mut sorted_readings = self.current_readings.clone();
+        sorted_readings.sort_by(|a, b| a.timestamp.partial_cmp(&b.timestamp).unwrap());
+
+        // Check max shot duration using timestamps (not wall-clock time)
+        if sorted_readings.len() >= 2 {
+            let first_timestamp = sorted_readings.first().unwrap().timestamp;
+            let last_timestamp = sorted_readings.last().unwrap().timestamp;
+            let duration = last_timestamp - first_timestamp;
             if duration > self.max_shot_duration_sec {
-                log::debug!(
+                log::warn!(
                     "[REJECTED] Shot duration {:.3}s exceeds max {:.3}s",
                     duration,
                     self.max_shot_duration_sec
@@ -249,10 +255,6 @@ impl<R: RadarInterface> LaunchMonitor<R> {
                 return;
             }
         }
-
-        // Sort readings by timestamp for temporal analysis
-        let mut sorted_readings = self.current_readings.clone();
-        sorted_readings.sort_by(|a, b| a.timestamp.partial_cmp(&b.timestamp).unwrap());
 
         // Find ball: peak speed reading
         let ball_reading = sorted_readings

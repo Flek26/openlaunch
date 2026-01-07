@@ -74,69 +74,85 @@ impl MockRadar {
         let smash_factor = rng.gen_range(1.35..1.55); // Typical range
         let club_speed = ball_speed / smash_factor;
 
-        // Generate club readings first (before impact)
-        // Club appears 50-200ms before ball
-        let club_duration = Duration::from_millis(rng.gen_range(50..200));
-        let club_readings = rng.gen_range(2..5);
+        // Base timestamp for the shot (time of first club reading)
+        let base_timestamp = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs_f64();
 
+        // Generate club readings first (before impact)
+        // Club appears 30-50ms before ball (reduced to stay under 300ms total)
+        let club_duration_ms = rng.gen_range(30..50);
+        let club_duration = Duration::from_millis(club_duration_ms);
+        let club_readings = rng.gen_range(2..3); // Reduced to 2-3 readings
+
+        // Generate all club readings and send them quickly
+        let mut club_reading_list = Vec::new();
         for i in 0..club_readings {
-            let elapsed = Duration::from_millis(i * 30); // ~30ms between readings
-            if elapsed < club_duration {
+            let elapsed_ms = i * 20; // 20ms between readings
+            if elapsed_ms < club_duration_ms {
+                let elapsed = Duration::from_millis(elapsed_ms);
                 let t = elapsed.as_secs_f64() / club_duration.as_secs_f64();
                 // Club speed ramps up during downswing
                 let speed = club_speed * (0.7 + 0.3 * t) + rng.gen_range(-2.0..2.0);
                 let magnitude = rng.gen_range(800.0..1500.0); // Club has higher RCS
 
-                let timestamp = std::time::SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)
-                    .unwrap()
-                    .as_secs_f64();
+                // Timestamp is base + elapsed time from first club reading
+                let timestamp = base_timestamp + elapsed_ms as f64 / 1000.0;
 
-                let reading = SpeedReading {
+                club_reading_list.push(SpeedReading {
                     speed: speed.max(15.0),
                     direction: Direction::Outbound,
                     magnitude: Some(magnitude),
                     timestamp,
-                };
-
-                if tx.send(reading).is_err() {
-                    return; // Receiver dropped
-                }
-                thread::sleep(Duration::from_millis(30));
+                });
             }
         }
 
-        // Small gap before ball (impact moment)
-        thread::sleep(Duration::from_millis(20));
+        // Small gap before ball (impact moment) - 10ms
+        let gap_ms = 10;
 
         // Generate ball readings (after impact)
-        let ball_readings = rng.gen_range(5..12); // More readings for ball
-        let ball_duration = Duration::from_millis(rng.gen_range(100..300));
+        // Total shot must be < 300ms, so: club (max 50ms) + gap (10ms) + ball (max 240ms) = 300ms
+        let ball_duration_ms = rng.gen_range(100..240);
+        let ball_duration = Duration::from_millis(ball_duration_ms);
+        let ball_readings = rng.gen_range(4..7); // Reduced to 4-7 readings
 
+        // Generate all ball readings
+        let mut ball_reading_list = Vec::new();
         for i in 0..ball_readings {
-            let elapsed = Duration::from_millis(i * 25); // ~25ms between readings
-            if elapsed < ball_duration {
+            let elapsed_ms = i * 20; // 20ms between readings
+            if elapsed_ms < ball_duration_ms {
+                let elapsed = Duration::from_millis(elapsed_ms);
                 let t = elapsed.as_secs_f64() / ball_duration.as_secs_f64();
                 // Ball speed starts high and decays slightly (drag)
                 let speed = ball_speed * (1.0 - 0.05 * t) + rng.gen_range(-3.0..3.0);
                 let magnitude = rng.gen_range(200.0..600.0); // Ball has lower RCS
 
-                let timestamp = std::time::SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)
-                    .unwrap()
-                    .as_secs_f64();
+                // Timestamp is base + club_duration + gap + elapsed ball time
+                let timestamp = base_timestamp + (club_duration_ms + gap_ms + elapsed_ms) as f64 / 1000.0;
 
-                let reading = SpeedReading {
+                ball_reading_list.push(SpeedReading {
                     speed: speed.max(15.0),
                     direction: Direction::Outbound,
                     magnitude: Some(magnitude),
                     timestamp,
-                };
+                });
+            }
+        }
 
-                if tx.send(reading).is_err() {
-                    return; // Receiver dropped
-                }
-                thread::sleep(Duration::from_millis(25));
+        // Send all readings immediately with correct timestamps
+        // The timestamps represent simulated time, but we send them all at once
+        // to keep wall-clock duration minimal
+        for reading in club_reading_list {
+            if tx.send(reading).is_err() {
+                return; // Receiver dropped
+            }
+        }
+
+        for reading in ball_reading_list {
+            if tx.send(reading).is_err() {
+                return; // Receiver dropped
             }
         }
 
